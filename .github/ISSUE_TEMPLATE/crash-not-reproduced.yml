@@ -1,0 +1,96 @@
+name: Crash not reproduced
+description: reproduce (or your agent with it) did not reproduce a crash, or its verdict looks wrong.
+labels: ["not reproduced"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks: crashes that were not reproduced are how `reproduce` gets better.
+
+        **Privacy first.** Crash reports carry other people's data. Never paste tokens, signed URLs (`X-Goog-Signature`,
+        `X-Amz-Signature`, `token=` …), API keys, or users' personal data (names, emails, phone numbers, user or
+        installation ids, IP addresses, the contents of their screens). The reports and run files redact secrets
+        in URLs and users' ids, but read what you paste and replace anything private with a placeholder such as `<redacted>`.
+        Do not attach a full crash report of an app that is not yours to share: the slices below are enough.
+  - type: input
+    id: version
+    attributes:
+      label: reproduce version
+      description: The release tag or commit you installed, and the skills folder it is in.
+    validations:
+      required: true
+  - type: dropdown
+    id: kind
+    attributes:
+      label: The report's kind
+      options:
+        - Crashlytics link
+        - Sentry link
+        - Crashlytics or Sentry event JSON (file)
+        - Sentry issue text
+        - crash-stats link
+        - Apple .ips or .crash
+        - logcat
+        - Java/Kotlin stack trace
+        - XCTest, swift test, flutter test or Jest output
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: App platform and framework
+      multiple: true
+      options:
+        - Android (Kotlin/Java)
+        - iOS (Swift/Objective-C)
+        - Flutter
+        - React Native / Expo
+    validations:
+      required: true
+  - type: dropdown
+    id: engine
+    attributes:
+      label: How it was tried
+      multiple: true
+      options:
+        - Code path (a test that calls the real code)
+        - Device path (an emulator or simulator, the skill's drivers)
+        - Not tried yet (the analysis or plan looks wrong)
+    validations:
+      required: true
+  - type: textarea
+    id: verdict
+    attributes:
+      label: What the referee said
+      description: The status, level and reasons from `verdict/NN.json`, and the run's `progress.md`.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: stack
+    attributes:
+      label: The crash's stack
+      description: The `exceptions` block from `crash.json` (redact first).
+      render: text
+  - type: textarea
+    id: analysis
+    attributes:
+      label: The brief, and other slices that matter
+      description: |
+        The parts of `analysis.json` that explain the trigger, the hypotheses and the session data.
+        Redact first.
+      render: text
+  - type: textarea
+    id: expected
+    attributes:
+      label: Why you think it should reproduce (or why the verdict is wrong)
+      description: What you know about the crash's cause or the steps that trigger it.
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      description: Host OS, Python version, the emulator or simulator, and your coding agent if any.
+      render: text

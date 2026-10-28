@@ -1,0 +1,89 @@
+name: Bug
+description: reproduce failed, gave a wrong answer, or a command did not do what its documentation says.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. For a crash that `reproduce` did not reproduce, use the "Crash not reproduced" form instead.
+        **Privacy:** never paste tokens (`SENTRY_AUTH_TOKEN`, Google tokens), signed URLs, or users' personal data
+        (names, emails, user ids). Replace them with placeholders such as `<token>`. A security problem goes to
+        [SECURITY.md](https://github.com/gitemre/reproduce/blob/main/SECURITY.md), not here.
+  - type: input
+    id: version
+    attributes:
+      label: reproduce version
+      description: The release tag or commit you installed, and where you installed it (the skills folder).
+      placeholder: v2.0.0 (abc1234), ~/.agents/skills/reproduce
+    validations:
+      required: true
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Environment
+      description: Host OS, Python version, adb/emulator or Xcode/simctl versions, and the coding agent and sandbox mode. Redact paths you would rather not share.
+      render: text
+    validations:
+      required: true
+  - type: dropdown
+    id: host
+    attributes:
+      label: Host OS
+      options:
+        - macOS
+        - Linux
+        - Windows
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: host-version
+    attributes:
+      label: Host OS version
+      placeholder: macOS 27.0 (arm64), Ubuntu 24.04 (x86_64)
+  - type: dropdown
+    id: platform
+    attributes:
+      label: App platform and framework
+      multiple: true
+      options:
+        - Android (Kotlin/Java)
+        - iOS (Swift/Objective-C)
+        - Flutter
+        - React Native / Expo
+        - Not about an app
+    validations:
+      required: true
+  - type: input
+    id: agent
+    attributes:
+      label: Coding agent, if any
+      description: The agent and its version, and its sandbox or permission mode.
+      placeholder: Claude Code 2.x, default permission mode / none, I ran the steps myself
+  - type: textarea
+    id: command
+    attributes:
+      label: The step that went wrong
+      description: The agent prompt and the skill step (0-5), plus the exact command the agent ran.
+      render: shell
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: The output, the exit code, and the run files that show it (`progress.md`, `verdict/NN.json`, `logcat.txt`, `crash.ips`). Redact before pasting.
+      render: text
+    validations:
+      required: true
+  - type: textarea
+    id: more
+    attributes:
+      label: Anything else
+      description: How often it happens, a device or simulator model, what you tried.
