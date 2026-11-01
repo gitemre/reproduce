@@ -5,6 +5,16 @@ All notable changes to `reproduce` are listed here. The format follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html): a change to a command, a flag or a file
 format that breaks its earlier use comes with a new major version.
 
+## [1.0.1] - 2026-11-01
+
+### Changed
+
+- **Headless device runs are documented and allowed.** Android adds `-no-window`; iOS uses `simctl`
+  without `Simulator.app`. The run records `"headless": true` in `device-env.json`; screenshots, video and
+  the app log remain the evidence, and the agent stops instead of asking a user to look at the screen.
+- The device-path table and schema name the optional `headless` field; the platform pages show how to
+  start each device headless and how to open a window when a person needs to watch or act.
+
 ## [1.0.0] - 2026-11-01
 
 The first public release of the Markdown-only, mobile Agent Skill.
@@ -72,4 +82,5 @@ The first public release of the Markdown-only, mobile Agent Skill.
   app place; the matching report from the other service is used instead, and that is recorded.
 - Creating a new test target is not part of the skill; apps without one use the device path.
 
+[1.0.1]: https://github.com/gitemre/reproduce/releases/tag/v1.0.1
 [1.0.0]: https://github.com/gitemre/reproduce/releases/tag/v1.0.0

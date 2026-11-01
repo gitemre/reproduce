@@ -18,6 +18,10 @@ adb -s emulator-5580 shell getprop sys.boot_completed     # wait for 1
 adb -s emulator-5580 install -r -t <app.apk>
 ```
 
+For a headless run, add `-no-window` to the emulator command and set `"headless": true` in
+`device-env.json`; screenshots, logcat and the video remain the evidence. Do not ask a user to look at
+the screen.
+
 No app id? Read it from the APK:
 `"$ANDROID_HOME/build-tools/<version>/aapt" dump badging <app.apk> | head -n 1`. After install,
 `adb shell pm list packages -3` lists the third-party packages.

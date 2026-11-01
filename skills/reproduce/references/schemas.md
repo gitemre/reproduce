@@ -108,7 +108,8 @@ context, not evidence.
 | `started_at` | non-empty string | when the run started |
 
 `device-env.json` (device path) records `platform`, `os`, `device`, `locale`, `timezone`, `app_id`,
-`artifact`, `variant` and `isolation`; [device-path.md](device-path.md#device-envjson) gives the types.
+`artifact`, `variant` and `isolation`; an optional `headless` boolean records a run with no emulator or
+simulator window. [device-path.md](device-path.md#device-envjson) gives the types.
 
 ## verdict.json
 

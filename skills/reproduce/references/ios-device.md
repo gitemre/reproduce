@@ -22,6 +22,10 @@ xcrun simctl bootstatus <udid> -b
 xcrun simctl install <udid> <App.app>
 ```
 
+`simctl boot` is headless: it does not open `Simulator.app`. Open the window only when a person needs to
+watch or act (`open -a Simulator --args -CurrentDeviceUDID <udid>`); a headless run records
+`"headless": true` and uses `simctl` screenshots/video.
+
 Use the same bundle identifier as the crash. `simctl launch <udid> <bundle>` starts it;
 `simctl terminate`, `simctl io <udid> screenshot shot.png`,
 `simctl io <udid> recordVideo --codec=h264 replay.mp4` and `simctl openurl <udid> <url>` (deep link) are the

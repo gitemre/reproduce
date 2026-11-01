@@ -143,8 +143,10 @@ it. See [TESTERS.md](TESTERS.md) and
   asks; it never retries outside the sandbox without your yes.
 - Start at the app's repository root. A marker one folder up keeps a run started in a subfolder inside the
   workspace.
-- Devices run in a window by default. A headless run has no one to answer a question: the agent stops and
-  says what is missing.
+- Devices may run in a window or headless. A headless run uses an Android emulator with `-no-window` and
+  an iOS simulator through `simctl` without `Simulator.app`; it records `"headless": true` in
+  `device-env.json`. There is no user watching or touching the device, so screenshots, video and the app
+  log are the evidence; when a step needs a human, the agent stops and says what is missing.
 - An Android emulator on Linux needs KVM. A missing system image is a multi-GB download; only you decide it.
 
 ## Checks

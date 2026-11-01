@@ -59,8 +59,11 @@ Write `device-env.json`:
 | `artifact` | string | the installed APK or `.app` path |
 | `variant` | string | `release` or `debug`; the build the crash came from |
 | `isolation` | string | `airplane`, `read-only` or `none` (iOS), and how it was checked |
+| `headless` | boolean | optional; `true` when no emulator or simulator window was opened |
 
-Boot a device of the run's own.
+Boot a device of the run's own. A headless run is allowed: Android adds `-no-window`, iOS stays on
+`simctl` without `Simulator.app`, and the run records `"headless": true`; the evidence is still the
+screenshots, video and app log.
 
 - Android: [android-device.md](android-device.md) — emulator, install, locale, network cut, UI tree, logcat
   and video.
