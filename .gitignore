@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Agent harness scratch
+.superpowers/
+
+# App build outputs created by a run
+**/build/
+**/.gradle/
+**/.kotlin/
+**/.build/
+**/.swiftpm/
+xcuserdata/
+**/ReproduceRunner.xcodeproj/project.xcworkspace/
+
+# reproduce run artifacts
+.reproduce/runs/
+
+# end-to-end check logs
+/*-check.log
+/*-check-artifacts/
+
+# macOS
+.DS_Store
