@@ -1,0 +1,2 @@
+# The product is a Markdown skill. The shell files are packaging/smoke tooling, not the project's language.
+scripts/** linguist-vendored
