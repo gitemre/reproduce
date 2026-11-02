@@ -89,8 +89,7 @@ transport has it (threads, breadcrumbs, logs, keys, tags, contexts, app, device)
 exists, copy `url`, `event_id`, `issue_id`, `selected`, `reason`, `transport` and `fetched_at` into
 `crash.json.source`; a file input keeps `source.path` and `fetched_at`. Hypothesis: `analysis.json`.
 
-A report whose innermost frame is a reporter call (`recordError`, `captureException`) was recorded by the
-app itself; say so in `analysis.json`.
+A reporter frame (`recordError`, `captureException`) means the app recorded the event; say so in `analysis.json`.
 
 **Done when:** `crash.json` has a type and at least one frame, or `analysis.json` says why it cannot place
 the crash; `analysis.json` says whether session data was present or missing.

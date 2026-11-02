@@ -162,20 +162,20 @@ normalize one. No JS frame still means no place.
 
 ### R16 — Recorded events
 
-An event the app recorded itself (`recordError`, `captureException`) never escaped, so its type is the
-transport's wrapper and decides nothing: match the message and the reporter's app frame (R14). See
-[reported-events.md](reported-events.md).
+A recorded event (`recordError`, `captureException`) never escaped; its type is the transport's and decides
+nothing. Match the message and the reporter's app frame (R14). See [reported-events.md](reported-events.md).
 
 ## Tie-break
 
-1. Drop the reported crash itself (R2). Match the type (R4, R6–R10, R15, R16) and the place (R1, R3, R5, R13).
+1. Drop the reported crash itself (R2). Match the type (R4, R6–R10, R15) and the place (R1, R3, R5, R13);
+   R16: message and place.
 2. Choose the best observation: most matching app frames, then exact over drifted, then message match; one
    match is enough.
 3. Set the level (R14). If rules conflict, the lower verdict wins: `NOT_REPRODUCED` < `PARTIAL` <
    `REPRODUCED`. A wrong `REPRODUCED` is worse than a miss.
-4. `REPRODUCED` needs type and place; `PARTIAL` needs exactly one; `NOT_REPRODUCED` has neither.
+4. `REPRODUCED` needs type and place (R16: message and place); `PARTIAL` one; `NOT_REPRODUCED` neither.
 5. Caps: a generic build-tool wrapper with no matching place is `NOT_REPRODUCED` (R4); a test-only place is
    at most `PARTIAL` (R1); a self-observation is not evidence (R2). The best observation decides; a
    self one is ignored; only unrelated ones is `NOT_REPRODUCED`.
 
-When ambiguous, choose the lower verdict. A new fact becomes a rule here, never a one-off answer.
+A new fact becomes a rule here, never a one-off answer.
