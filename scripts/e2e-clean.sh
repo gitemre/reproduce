@@ -1,13 +1,13 @@
 #!/bin/sh
-# Public smoke check: a clean checkout installs the Markdown-only skill.
+# Public smoke check: a clean checkout installs the Markdown-only skills.
 #
 #   scripts/e2e-clean.sh              # test the committed tree (HEAD)
 #   scripts/e2e-clean.sh <ref>        # test another commit/tag
 #   scripts/e2e-clean.sh --worktree   # test the current files, including uncommitted ones
 #
-# It extracts a fresh copy, installs the skill with the installer, checks
-# the installed SKILL.md, its description, the 12 KB/10 KB limits and relative links,
-# and enforces the Markdown-only rule. It needs no device and no network.
+# It extracts a fresh copy, installs both skills, checks each SKILL.md, its
+# description, the 12 KB/10 KB limits and relative links, and enforces the
+# Markdown-only rule. It needs no device and no network.
 set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
@@ -41,37 +41,39 @@ fail() { printf 'FAIL: %s\n' "$*" >&2; exit 1; }
 sh scripts/install-skill.sh --skills-dir "$WORK/skills" > "$WORK/install.log" || { cat "$WORK/install.log"; fail "install"; }
 cat "$WORK/install.log"
 
-SKILL="$WORK/skills/reproduce"
-[ -f "$SKILL/SKILL.md" ] || fail "installed copy has no SKILL.md"
-grep -q '^name: reproduce$' "$SKILL/SKILL.md" || fail "installed SKILL.md has no name: reproduce"
+for name in reproduce fix-crash; do
+    SKILL="$WORK/skills/$name"
+    [ -f "$SKILL/SKILL.md" ] || fail "installed $name has no SKILL.md"
+    grep -q "^name: $name$" "$SKILL/SKILL.md" || fail "installed $name/SKILL.md has no name: $name"
 
-DESC=$(sed -n 's/^description: //p' "$SKILL/SKILL.md" | head -n 1)
-[ -n "$DESC" ] || fail "installed SKILL.md has no description"
-DESC_SIZE=$(printf '%s' "$DESC" | wc -c | tr -d ' ')
-[ "$DESC_SIZE" -lt 1024 ] || fail "SKILL.md description is $DESC_SIZE bytes; keep it under 1024"
+    DESC=$(sed -n 's/^description: //p' "$SKILL/SKILL.md" | head -n 1)
+    [ -n "$DESC" ] || fail "installed $name/SKILL.md has no description"
+    DESC_SIZE=$(printf '%s' "$DESC" | wc -c | tr -d ' ')
+    [ "$DESC_SIZE" -lt 1024 ] || fail "$name/SKILL.md description is $DESC_SIZE bytes; keep it under 1024"
 
-NOT_MD=$(find "$SKILL" -type f ! -name '*.md' ! -name '.DS_Store' ! -name '.gitkeep' | wc -l | tr -d ' ')
-if [ "$NOT_MD" != "0" ]; then
-    find "$SKILL" -type f ! -name '*.md' ! -name '.DS_Store' ! -name '.gitkeep'
-    fail "$NOT_MD non-Markdown files in the installed skill; the skill must stay Markdown-only"
-fi
+    NOT_MD=$(find "$SKILL" -type f ! -name '*.md' ! -name '.DS_Store' ! -name '.gitkeep' | wc -l | tr -d ' ')
+    if [ "$NOT_MD" != "0" ]; then
+        find "$SKILL" -type f ! -name '*.md' ! -name '.DS_Store' ! -name '.gitkeep'
+        fail "$NOT_MD non-Markdown files in $name; the skill must stay Markdown-only"
+    fi
 
-# Size limits: SKILL.md under 12 KB; every reference under 10 KB.
-SKILL_SIZE=$(wc -c < "$SKILL/SKILL.md" | tr -d ' ')
-[ "$SKILL_SIZE" -lt 12288 ] || fail "SKILL.md is $SKILL_SIZE bytes; keep it under 12 KB"
+    # Size limits: SKILL.md under 12 KB; every reference under 10 KB.
+    SKILL_SIZE=$(wc -c < "$SKILL/SKILL.md" | tr -d ' ')
+    [ "$SKILL_SIZE" -lt 12288 ] || fail "$name/SKILL.md is $SKILL_SIZE bytes; keep it under 12 KB"
 
-BIG=$WORK/big-references
-: > "$BIG"
-for f in $(find "$SKILL" -name '*.md' ! -name 'SKILL.md'); do
-    SIZE=$(wc -c < "$f" | tr -d ' ')
-    [ "$SIZE" -lt 10240 ] || printf '%s %s\n' "$SIZE" "$f" >> "$BIG"
+    BIG=$WORK/big-references-$name
+    : > "$BIG"
+    for f in $(find "$SKILL" -name '*.md' ! -name 'SKILL.md'); do
+        SIZE=$(wc -c < "$f" | tr -d ' ')
+        [ "$SIZE" -lt 10240 ] || printf '%s %s\n' "$SIZE" "$f" >> "$BIG"
+    done
+    if [ -s "$BIG" ]; then cat "$BIG"; fail "$name references over 10 KB"; fi
+
+    # No absolute home path and no TODO marker in the product.
+    if grep -rn -e '/Users/' -e '/home/' -e 'TODO' -e 'FIXME' "$SKILL" > "$WORK/forbidden-$name"; then
+        cat "$WORK/forbidden-$name"; fail "absolute path or TODO marker in $name"
+    fi
 done
-if [ -s "$BIG" ]; then cat "$BIG"; fail "references over 10 KB"; fi
-
-# No absolute home path and no TODO marker in the product.
-if grep -rn -e '/Users/' -e '/home/' -e 'TODO' -e 'FIXME' "$SKILL" > "$WORK/forbidden"; then
-    cat "$WORK/forbidden"; fail "absolute path or TODO marker in the skill"
-fi
 
 # Relative Markdown links resolve.
 BADLINKS=$WORK/bad-links
@@ -88,4 +90,4 @@ for f in $(find . -name '*.md'); do
 done
 if [ -s "$BADLINKS" ]; then cat "$BADLINKS"; fail "relative links do not resolve"; fi
 
-printf 'PASS: clean %s installs; SKILL.md and description present; sizes, links and Markdown-only rules pass (no Go, no device, no network)\n' "$LABEL"
+printf 'PASS: clean %s installs both skills; SKILL.md and description present; sizes, links and Markdown-only rules pass (no device, no network)\n' "$LABEL"

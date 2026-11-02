@@ -20,7 +20,8 @@ personal data, or replace them with placeholders: they are not needed to underst
 
 ## Scope
 
-In scope, in this repository (the skill in `skills/reproduce` and its installer and smoke scripts):
+In scope, in this repository (the skills in `skills/reproduce` and `skills/fix-crash`, and their installer
+and smoke scripts):
 
 - **Reports to production.** An app installed or started by the device path reaches its production crash
   reporting or analytics backends (Crashlytics, Analytics, Sentry, …) although the isolation said it was in
@@ -35,10 +36,12 @@ In scope, in this repository (the skill in `skills/reproduce` and its installer 
   [docs/WHAT-IT-DOES.md](docs/WHAT-IT-DOES.md) does not list, or crash data from the field (a message, a log
   line) that the skill treats as an instruction.
 - **Temporary automation.** Model-written automation (a temporary XCUITest or helper) that outlives the run,
-  reads secrets, changes the app beyond the one allowed test-file edit, or runs on a device or host the run
-  was not given.
+  reads secrets, changes the app beyond the one allowed test-file edit outside the approved fix phase, or runs
+  on a device or host the run was not given.
+- **A fix beyond the approval.** `fix-crash` changes production code without the user's explicit approval,
+  without a plan and an impact map, or outside the blame frame of the reproduced crash.
 - **Installer or rule bypass.** `scripts/install-skill.sh` writes outside the requested skills folder, or
-  a file that violates the Markdown-only or size rules ships in `skills/reproduce/`.
+  a file that violates the Markdown-only or size rules ships in either skill folder.
 
 Out of scope: bugs in the app being reproduced (that is what the skill is for), in the vendors' tools (`adb`,
 the emulator, Xcode, Gradle) and in your coding agent or its sandbox.

@@ -166,6 +166,10 @@ evidence.
 
 **Proves:** the code path's `report.md`/`guide.md`; the device path's `report.md` and `replay.mp4`.
 
+**Next:** when the verdict is `REPRODUCED`, ask once whether to fix. If yes, use the `fix-crash` skill
+with this run folder; do not edit production code here. `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT`
+are not fixable.
+
 ## Verdicts
 
 - `REPRODUCED`: the same exception type and the same place. The evidence names both.

@@ -1,13 +1,16 @@
 # reproduce, for coding agents
 
-`reproduce` is an Agent Skill in `skills/reproduce/`. It turns a mobile crash report (Crashlytics, Sentry, an
-Apple `.ips`, logcat, a stack trace) into a verified reproduction on Android and iOS. It is Markdown and runs
-on the platform tools the app already uses.
+`reproduce` and `fix-crash` are Agent Skills in `skills/`. `reproduce` turns a mobile crash report
+(Crashlytics, Sentry, an Apple `.ips`, logcat, a stack trace) into a verified reproduction on Android and
+iOS. `fix-crash` is the opt-in follow-up: it reads the run folder, requires a `REPRODUCED` verdict, plans the
+smallest fix, maps its impact, gets a fresh reviewer and changes production code only after the user's
+approval. Both are Markdown and run on the platform tools the app already uses.
 
-## Install the skill
+## Install the skills
 
 ```bash
 npx skills add gitemre/reproduce
+npx skills add gitemre/reproduce --skill=fix-crash
 ```
 
 or, from a clone, the installer:
@@ -16,13 +19,13 @@ or, from a clone, the installer:
 scripts/install-skill.sh                    # ~/.claude/skills and ~/.agents/skills (and existing copies)
 scripts/install-skill.sh --agent claude     # one agent
 scripts/install-skill.sh --project          # ./.claude/skills and ./.agents/skills
-scripts/install-skill.sh --skills-dir PATH  # PATH/reproduce
-scripts/install-skill.sh --uninstall        # remove the installed copy
+scripts/install-skill.sh --skills-dir PATH  # PATH/reproduce and PATH/fix-crash
+scripts/install-skill.sh --uninstall        # remove both installed copies
 ```
 
 Agents read: Claude Code `~/.claude/skills`; Codex, OpenCode, Gemini CLI, Cursor and GitHub Copilot
 `~/.agents/skills`; Antigravity CLI `~/.gemini/config/skills`; OpenCode also
-`~/.config/opencode/skills`. A manual `cp -R skills/reproduce <skills-dir>/reproduce` works too.
+`~/.config/opencode/skills`. A manual `cp -R skills/reproduce skills/fix-crash <skills-dir>/` works too.
 
 ## Reproduce a crash
 
@@ -59,6 +62,12 @@ Agents read: Claude Code `~/.claude/skills`; Codex, OpenCode, Gemini CLI, Cursor
   - iOS: raw `simctl`; if UI automation is needed, write a temporary XCUITest yourself —
     `references/ios-device.md`, `references/ios-ui-automation.md`.
 
+### Fix handoff
+
+`reproduce` is read-only. When the verdict is `REPRODUCED`, ask once whether to fix. If yes, use the
+`fix-crash` skill with the run folder. `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT` are not fixable.
+`fix-crash` asks before the plan and before the patch, and leaves the diff uncommitted.
+
 ## Work on this repository
 
 ```bash
@@ -66,10 +75,10 @@ sh scripts/e2e-clean.sh              # clean checkout, install, sizes, links
 sh scripts/e2e-clean.sh --worktree   # the same on the current files
 ```
 
-The public repo is the skill, the installer and the user docs.
+The public repo is the skills, the installer and the user docs.
 
 The contract is the text. Keep automation model-written and temporary; do not add a script or a runner to
-`skills/reproduce/`.
+`skills/`.
 
 Layout:
 
@@ -77,12 +86,15 @@ Layout:
 |---|---|
 | `skills/reproduce/SKILL.md` | the six steps, the rules and the reference index |
 | `skills/reproduce/references/` | fetch, readers, code path, device path, referee, report |
-| `scripts/install-skill.sh` | the skill installer |
-| `scripts/e2e-clean.sh` | the public install, frontmatter, size, link and Markdown-only smoke check |
+| `skills/fix-crash/SKILL.md` | the fix gate, plan, reviewer, apply, verify, report |
+| `skills/fix-crash/references/` | impact map, fix reviewer, fix schemas |
+| `scripts/install-skill.sh` | installs both skills |
+| `scripts/e2e-clean.sh` | the public install, frontmatter, size, link and Markdown-only smoke check for both |
 | `docs/` | usage, testers, architecture, compatibility, what it touches |
 
-The skill is the product. Keep `SKILL.md` under 12 KB and every reference under 10 KB (the public smoke check
-enforces both). Do not add an absolute path, a `TODO`, or an instruction to run a `reproduce` command.
+The skills are the product. Keep each `SKILL.md` under 12 KB and every reference under 10 KB (the public smoke
+check enforces both). Do not add an absolute path, a `TODO`, or an instruction to run a `reproduce` or
+`fix-crash` command.
 
 ## Release
 

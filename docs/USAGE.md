@@ -156,4 +156,10 @@ it. See [TESTERS.md](TESTERS.md) and
 sh scripts/e2e-clean.sh
 ```
 
-It extracts a clean copy, installs the skill and checks its sizes and links and that it ships no code.
+It extracts a clean copy, installs both skills and checks their sizes and links and that they ship no code.
+
+## After the report
+
+If the verdict is `REPRODUCED`, the agent asks once whether to fix. Yes hands the run folder to `fix-crash`;
+no keeps the report. `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT` are not fixable. The fix flow is in
+[fix-crash/SKILL.md](../skills/fix-crash/SKILL.md).

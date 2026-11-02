@@ -4,6 +4,24 @@ All notable changes to `reproduce` are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+### Added
+
+- **`fix-crash` skill.** A separate opt-in skill for a reproduced crash: `REPRODUCED` gate, minimal fix
+  plan and impact map, fresh fix reviewer, explicit user approval, red-to-green reproduction test, full
+  suite and device check, `FIXED` / `FIX_PARTIAL` / `NOT_FIXED`, and an uncommitted diff.
+- **Fix handoff.** `reproduce` step 5 asks once after `REPRODUCED` whether to fix and hands the run folder
+  to `fix-crash`; `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT` are not fixable.
+- **Two-skill packaging.** The installer installs both skills; the smoke check checks both; README,
+  architecture and compatibility document the fix flow.
+
+### Changed
+
+- `scripts/install-skill.sh` installs and removes both skills; `--skills-dir PATH` writes `PATH/reproduce`
+  and `PATH/fix-crash`.
+- `scripts/e2e-clean.sh` checks each skill's `SKILL.md`, description, sizes, links and Markdown-only rule.
+
 ## [1.0.0] - 2026-11-02
 
 The first public release of the Markdown-only, mobile Agent Skill.

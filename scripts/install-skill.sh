@@ -1,21 +1,21 @@
 #!/bin/sh
-# Install the reproduce skill into an agent's skills folder. The skill is the
-# product.
+# Install the reproduce and fix-crash skills into an agent's skills folder. The
+# skills are the product.
 #
 #   scripts/install-skill.sh                     # ~/.claude/skills and ~/.agents/skills
 #   scripts/install-skill.sh --agent claude      # one agent
 #   scripts/install-skill.sh --project           # ./.claude/skills and ./.agents/skills
-#   scripts/install-skill.sh --skills-dir PATH   # PATH/reproduce
-#   scripts/install-skill.sh --uninstall ...     # remove the installed copy
+#   scripts/install-skill.sh --skills-dir PATH   # PATH/reproduce and PATH/fix-crash
+#   scripts/install-skill.sh --uninstall ...     # remove the installed copies
 #
-# The default also refreshes an existing copy in ~/.gemini/config/skills and
-# ~/.config/opencode/skills. The copy replaces an older one atomically. Run it
+# The default also refreshes existing copies in ~/.gemini/config/skills and
+# ~/.config/opencode/skills. Each copy replaces an older one atomically. Run it
 # again after every update.
 set -eu
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
 REPO_ROOT=$(dirname -- "$SCRIPT_DIR")
-SOURCE="$REPO_ROOT/skills/reproduce"
+SKILLS="reproduce fix-crash"
 
 usage() {
     sed -n '2,13p' "$0" | sed 's/^# \{0,1\}//'
@@ -26,9 +26,10 @@ die() {
     exit 1
 }
 
-[ -f "$SOURCE/SKILL.md" ] || die "cannot find $SOURCE/SKILL.md; run this from a checkout"
+for skill in $SKILLS; do
+    [ -f "$REPO_ROOT/skills/$skill/SKILL.md" ] || die "cannot find $REPO_ROOT/skills/$skill/SKILL.md; run this from a checkout"
+done
 
-mode=default
 agent=
 skills_dir=
 project=0
@@ -92,46 +93,53 @@ trap cleanup EXIT INT TERM
 install_to() {
     parent=$1
     [ -n "$parent" ] || die "empty target folder"
-    grep -q '^name: reproduce$' "$SOURCE/SKILL.md" || die "source SKILL.md has no name: reproduce"
     mkdir -p "$parent" || die "cannot create $parent"
-    dest="$parent/reproduce"
-    staging="$parent/.reproduce-install.$$"
-    backup="$parent/.reproduce-backup.$$"
-    rm -rf "$staging" "$backup"
-    cp -R "$SOURCE" "$staging" || die "cannot copy the skill to $staging"
 
-    # Move the old copy aside first; if the new one cannot be moved in, restore it.
-    if [ -e "$dest" ] || [ -L "$dest" ]; then
-        mv "$dest" "$backup" || die "cannot move the old copy aside: $dest"
-    fi
-    if ! mv "$staging" "$dest"; then
-        if [ -e "$backup" ] || [ -L "$backup" ]; then
-            mv "$backup" "$dest" || true
+    for skill in $SKILLS; do
+        source="$REPO_ROOT/skills/$skill"
+        grep -q "^name: $skill$" "$source/SKILL.md" || die "source $skill/SKILL.md has no name: $skill"
+        dest="$parent/$skill"
+        staging="$parent/.$skill-install.$$"
+        backup="$parent/.$skill-backup.$$"
+        rm -rf "$staging" "$backup"
+        cp -R "$source" "$staging" || die "cannot copy $skill to $staging"
+
+        # Move the old copy aside first; if the new one cannot be moved in, restore it.
+        if [ -e "$dest" ] || [ -L "$dest" ]; then
+            mv "$dest" "$backup" || die "cannot move the old copy aside: $dest"
         fi
-        die "cannot move the skill to $dest"
-    fi
-    staging=
-    rm -rf "$backup"
-    backup=
-    [ -f "$dest/SKILL.md" ] || die "the installed copy has no SKILL.md: $dest"
-    printf 'installed %s\n' "$dest"
+        if ! mv "$staging" "$dest"; then
+            if [ -e "$backup" ] || [ -L "$backup" ]; then
+                mv "$backup" "$dest" || true
+            fi
+            die "cannot move $skill to $dest"
+        fi
+        staging=
+        rm -rf "$backup"
+        backup=
+        [ -f "$dest/SKILL.md" ] || die "the installed $skill copy has no SKILL.md: $dest"
+        printf 'installed %s\n' "$dest"
+    done
 }
 
 remove_from() {
     parent=$1
     [ -n "$parent" ] || die "empty target folder"
-    dest="$parent/reproduce"
-    if [ ! -e "$dest" ] && [ ! -L "$dest" ]; then
-        printf 'not installed: %s\n' "$dest"
-        return 0
-    fi
-    if [ -e "$dest" ] && [ "$(cd -- "$parent" && pwd -P)" = "$(cd -- "$SOURCE/.." && pwd -P)" ]; then
-        die "refusing to remove the source copy: $dest"
-    fi
-    [ -f "$dest/SKILL.md" ] || die "refusing to remove $dest: no SKILL.md"
-    grep -q '^name: reproduce$' "$dest/SKILL.md" || die "refusing to remove $dest: not the reproduce skill"
-    rm -rf "$dest"
-    printf 'removed %s\n' "$dest"
+
+    for skill in $SKILLS; do
+        dest="$parent/$skill"
+        if [ ! -e "$dest" ] && [ ! -L "$dest" ]; then
+            printf 'not installed: %s\n' "$dest"
+            continue
+        fi
+        if [ -e "$dest" ] && [ "$(cd -- "$parent" && pwd -P)" = "$(cd -- "$REPO_ROOT/skills" && pwd -P)" ]; then
+            die "refusing to remove the source copy: $dest"
+        fi
+        [ -f "$dest/SKILL.md" ] || die "refusing to remove $dest: no SKILL.md"
+        grep -q "^name: $skill$" "$dest/SKILL.md" || die "refusing to remove $dest: not the $skill skill"
+        rm -rf "$dest"
+        printf 'removed %s\n' "$dest"
+    done
 }
 
 if [ "$uninstall" -eq 1 ]; then
@@ -155,7 +163,7 @@ if [ "$uninstall" -eq 1 ]; then
         remove_from "$HOME/.claude/skills"
         remove_from "$HOME/.agents/skills"
         for extra in "$HOME/.gemini/config/skills" "$HOME/.config/opencode/skills"; do
-            if [ -e "$extra/reproduce" ] || [ -L "$extra/reproduce" ]; then
+            if [ -e "$extra/reproduce" ] || [ -L "$extra/reproduce" ] || [ -e "$extra/fix-crash" ] || [ -L "$extra/fix-crash" ]; then
                 remove_from "$extra"
             fi
         done
@@ -183,7 +191,7 @@ else
     install_to "$HOME/.claude/skills"
     install_to "$HOME/.agents/skills"
     for extra in "$HOME/.gemini/config/skills" "$HOME/.config/opencode/skills"; do
-        if [ -d "$extra/reproduce" ]; then
+        if [ -d "$extra/reproduce" ] || [ -d "$extra/fix-crash" ]; then
             install_to "$extra"
         fi
     done

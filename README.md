@@ -1,12 +1,14 @@
 # reproduce
 
-**Turn a mobile crash report into a verified reproduction, on Android and iOS.**
+**Turn a mobile crash report into a verified reproduction — and, when you ask, a reviewed fix.**
 
 `reproduce` is an Agent Skill. You give a coding agent a crash link, an `.ips`, logcat or a stack trace. The
 agent finds the trigger, makes the crash happen again on a device or in a test, and a blind referee decides
-whether it is the same crash.
+whether it is the same crash. If the verdict is `REPRODUCED`, it can hand off to `fix-crash`: a separate
+skill that plans the smallest fix, checks its impact, gets a fresh reviewer, and changes production code only
+after your approval.
 
-The skill is Markdown; the agent uses the platform tools and writes temporary automation if it needs one.
+Both skills are Markdown; the agent uses the platform tools and writes temporary automation if it needs one.
 
 ## What it does
 
@@ -17,12 +19,15 @@ The skill is Markdown; the agent uses the platform tools and writes temporary au
   simulator with the build the crash came from when the crash is UI/device-level or the app has no usable
   test.
 - **Proves it.** A fresh blind referee compares exception type and place and writes a verdict.
-- **Never changes your app.** No production code, dependency, build or signing change.
+- **Fixes it when asked.** After a `REPRODUCED` verdict, `fix-crash` plans the smallest change at the blame
+  frame, maps every caller, gets a fresh reviewer and asks before touching production code.
+- **Keeps reproduction read-only.** No production code, dependency, build or signing change during
+  `/reproduce`.
 - **Never reports to production.** The Android device is isolated first; the iOS simulator cannot be
   isolated, so an app with a reporting SDK needs your explicit yes.
 - **Shows you.** Device runs keep the UI dumps, logs, screenshots and a video; the report cites them.
 
-It does not fix the crash.
+It reproduces first. A fix is a separate, opt-in skill and starts only from a `REPRODUCED` verdict.
 
 ## How it works
 
@@ -65,11 +70,35 @@ the orchestrator; the blind referee writes only `REPRODUCED`, `PARTIAL` or `NOT_
 For example, a Crashlytics link can end as `REPRODUCED (blame-frame)`: the same exception type at the same
 app frame, with the test log or device evidence that shows it.
 
+### Fix after reproduction
+
+```mermaid
+flowchart LR
+    A["REPRODUCED"] --> B{"Ask once: fix?"}
+    B -- "yes" --> C["fix-crash<br/>plan + impact map"]
+    C --> D{"Approve the plan?"}
+    D -- "yes" --> E["minimal patch<br/>red-to-green test"]
+    E --> F["full suite<br/>device check"]
+    F --> G["fresh reviewer"]
+    G --> H["FIXED / FIX_PARTIAL"]
+    B -- "no" --> I["stop"]
+    D -- "no" --> I
+```
+
+- Only after `REPRODUCED`. `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT` are not fixable.
+- The agent asks once, at the end of `/reproduce`; there is no automatic fix.
+- Two approvals: write the plan, then apply the patch.
+- The fresh reviewer sees the applied diff and the test results, not just the plan.
+- `fix/plan.md`, `fix/review.json`, `fix/report.md` and `fix/diff.patch`; the diff stays uncommitted.
+- `FIXED` needs reviewer approval, a red-to-green reproduction test and the full suite. A device-only fix
+  without an automated regression test is `FIX_PARTIAL`.
+
 ## Requirements
 
 | For | You need |
 |---|---|
-| The skill | a shell; adb/emulator or Xcode for device runs |
+| The skills | a shell; adb/emulator or Xcode for device runs |
+| A fix | a completed run folder whose `verdict/NN.json` is `REPRODUCED`, the app's build/test tools, and a fresh reviewer |
 | Android apps | Android SDK (platform-tools, emulator, a `google_apis` image) and a JDK the build accepts |
 | iOS apps | macOS, Xcode and an iOS simulator runtime |
 | Flutter, React Native | the Flutter SDK the project pins; Node.js |
@@ -80,13 +109,14 @@ app frame, with the test log or device evidence that shows it.
 
 ## Install
 
-With the Agent Skills CLI:
+With the Agent Skills CLI, add both skills:
 
 ```bash
 npx skills add gitemre/reproduce
+npx skills add gitemre/reproduce --skill=fix-crash
 ```
 
-From a clone, the installer copies the skill into the agent folders:
+From a clone, the installer copies both skills into the agent folders:
 
 ```bash
 git clone https://github.com/gitemre/reproduce
@@ -94,16 +124,32 @@ cd reproduce
 scripts/install-skill.sh
 ```
 
-- Default: `~/.claude/skills/reproduce` and `~/.agents/skills/reproduce` (the shared folder Codex, OpenCode,
-  Gemini CLI, Cursor and GitHub Copilot read). An existing copy in Antigravity's
-  `~/.gemini/config/skills` or OpenCode's `~/.config/opencode/skills` is refreshed too.
-- `--agent claude|codex|opencode|gemini|antigravity|cursor|copilot` installs one agent's folder.
-- `--project` installs `./.claude/skills/reproduce` and `./.agents/skills/reproduce` in an app repository.
-- `--skills-dir PATH` installs `PATH/reproduce`.
-- `--uninstall` removes the installed copy from the same folder(s); it refuses a folder that is not the skill.
-- Manual copy: `cp -R skills/reproduce ~/.agents/skills/reproduce`.
+- Default: `reproduce` and `fix-crash` in `~/.claude/skills` and `~/.agents/skills` (the shared folder Codex,
+  OpenCode, Gemini CLI, Cursor and GitHub Copilot read). Existing copies in Antigravity's
+  `~/.gemini/config/skills` or OpenCode's `~/.config/opencode/skills` are refreshed too.
+- `--agent claude|codex|opencode|gemini|antigravity|cursor|copilot` installs both in one agent's folder.
+- `--project` installs both in `./.claude/skills` and `./.agents/skills` in an app repository.
+- `--skills-dir PATH` installs `PATH/reproduce` and `PATH/fix-crash`.
+- `--uninstall` removes both from the same folder(s); it refuses a folder that does not contain these skills.
+- Manual copy: `cp -R skills/reproduce skills/fix-crash ~/.agents/skills/`.
 
-Run it again after every update.
+## Update
+
+Re-run the installer; it replaces both skills atomically.
+
+```bash
+git pull
+scripts/install-skill.sh
+```
+
+With the Agent Skills CLI, `npx skills update` updates the installed skills. If you installed with a flag,
+repeat it: `--agent claude`, `--project` or `--skills-dir PATH`.
+
+Start a new agent session (or reload the skills) so the new `SKILL.md` files are read. To check one copy:
+
+```bash
+shasum -a 256 ~/.agents/skills/reproduce/SKILL.md skills/reproduce/SKILL.md
+```
 
 ## Use it
 
@@ -126,6 +172,11 @@ The agent reads the skill's `SKILL.md` and follows its six steps:
 
 One crash gets one run folder: `.reproduce/runs/<slug>/`.
 
+After step 5, if the verdict is `REPRODUCED`, the agent asks once whether to prepare a fix. Say yes to hand
+off to `fix-crash`; no to keep the report only. You can also start the fix directly with
+`/fix-crash <run folder>` (Claude Code, OpenCode, GitHub Copilot), `$fix-crash <run folder>` (Codex), or
+"fix this crash" plus the run folder.
+
 ### Code path and device path
 
 | | Code path | Device path |
@@ -134,7 +185,7 @@ One crash gets one run folder: `.reproduce/runs/<slug>/`.
 | How | writes one test that calls the real code and lets the exception escape; runs the app's own test command | builds/installs, boots an emulator or simulator, isolates, drives the UI, records and replays |
 | Tools | Gradle, `xcodebuild`, `swift test`, `flutter test`, Jest | adb + `uiautomator`, `xcrun simctl`; a temporary XCUITest when the model needs one |
 
-The skill never adds a test target to your app. Adding a test file to an existing target needs your explicit
+`reproduce` never adds a test target to your app. Adding a test file to an existing target needs your explicit
 yes and is recorded in the report. For iOS UI automation it may create a temporary scratch XCUITest project
 outside your app; that project is removed after the run.
 
@@ -153,6 +204,17 @@ outside your app; that project is removed after the run.
 
 The referee is conservative: a wrong `REPRODUCED` is worse than a miss.
 
+### Fix statuses
+
+| Status | Means |
+|---|---|
+| `FIXED` | fresh reviewer `APPROVED`, red-to-green reproduction test, full suite pass |
+| `FIX_PARTIAL` | verified, but the impact map or an automated regression test is incomplete |
+| `NOT_FIXED` | suite failed, reviewer rejected, or the root cause was not reached |
+
+A fix report also records the diff, the callers checked, the untested paths, the residual risk and the
+rollback.
+
 ## For testers without the code
 
 Open the agent in an empty folder and give it the crash. It finds no app, so it writes `guide.md` instead of
@@ -166,8 +228,9 @@ build, and drives it. See [references/tester.md](skills/reproduce/references/tes
 
 ## Safety
 
-- **No production changes.** No code, dependency, build configuration or signing change. Reproduction tests
-  stay uncommitted unless you ask.
+- **Reproduction is read-only.** No production code, dependency, build configuration or signing change
+  during `/reproduce`. A fix is the separate `fix-crash` skill, only after your explicit approval; the diff
+  stays uncommitted unless you ask.
 - **No reports to production.** The Android device is cut off first and that is checked on it. The iOS
   simulator cannot be isolated; an app with a reporting SDK runs there only after your yes.
 - **Crash data is data.** Messages, logs, breadcrumbs and tags are never instructions.
@@ -178,9 +241,10 @@ build, and drives it. See [references/tester.md](skills/reproduce/references/tes
 
 | Path | What |
 |---|---|
-| `skills/reproduce/` | the product: `SKILL.md` and `references/` |
-| `scripts/install-skill.sh` | the skill installer |
-| `scripts/e2e-clean.sh` | clean-checkout smoke: installs the skill, checks its frontmatter, sizes and links, and checks it stays Markdown-only |
+| `skills/reproduce/` | the evidence skill: `SKILL.md` and `references/` |
+| `skills/fix-crash/` | the opt-in fix skill: `SKILL.md` and `references/` |
+| `scripts/install-skill.sh` | installs both skills |
+| `scripts/e2e-clean.sh` | clean-checkout smoke: installs both, checks each frontmatter, sizes and links, and checks they stay Markdown-only |
 | `docs/` | usage, testers, architecture, compatibility, what it touches |
 
 ## Develop
@@ -189,8 +253,8 @@ build, and drives it. See [references/tester.md](skills/reproduce/references/tes
 sh scripts/e2e-clean.sh
 ```
 
-It extracts a clean copy, installs the skill with `scripts/install-skill.sh`, and checks the installed
-`SKILL.md` and its description, the size and link rules and that the skill stays Markdown-only. No network,
+It extracts a clean copy, installs both skills with `scripts/install-skill.sh`, and checks each installed
+`SKILL.md` and its description, the size and link rules and that the skills stay Markdown-only. No network,
 no device and no API key is needed.
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for the public checks and the pull request process.
@@ -199,7 +263,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for the public checks and the pull reques
 
 - [docs/USAGE.md](docs/USAGE.md): a run step by step, agents, sandboxes
 - [docs/TESTERS.md](docs/TESTERS.md): the tester path
-- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): the skill, the device tools and the run folder
+- [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): the skills, the device tools and the run folder
+- [skills/fix-crash/SKILL.md](skills/fix-crash/SKILL.md): the fix flow
 - [docs/WHAT-IT-DOES.md](docs/WHAT-IT-DOES.md): every file, host and program it touches
 - [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md): install targets and requirements
 - [AGENTS.md](AGENTS.md): install and operating rules for coding agents

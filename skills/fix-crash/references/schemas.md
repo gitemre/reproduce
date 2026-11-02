@@ -1,0 +1,114 @@
+# Fix schemas
+
+The fix run lives under `.reproduce/runs/<slug>/fix/`. The reproduction files are read-only inputs.
+
+```text
+fix/
+  plan.md        the root cause, minimal patch, impact map, regression test, rollback
+  diff.patch     git diff of the applied change
+  review.json    the fresh reviewer's verdict
+  after/         test output, JUnit, device video/log/screenshots
+  report.md      the fix record: status, diff, tests, impact, residual risk
+```
+
+## Contents
+
+fix/plan.md · fix/review.json · fix/report.md · Status · diff.patch
+
+## fix/plan.md
+
+```markdown
+# Fix plan: <crash>
+
+Run: `<run folder>` · Verdict: `REPRODUCED (blame-frame)` · File: `verdict/NN.json`
+
+## Root cause
+
+<The blame frame, the bad value and the condition, one paragraph.>
+
+## Minimal patch
+
+- `<file>` — <the smallest change>
+- `<file>` — <the test>
+
+## Impact map
+
+| Caller / use | Old behavior | New behavior | Risk | Test |
+|---|---|---|---|---|
+| `<caller>` | `<old>` | `<new>` | `<risk>` | `<test>` |
+
+## Regression test
+
+<The input, the assertion and the command. The test must fail before the patch and pass after.>
+
+## Rollback
+
+`<the revert command and the files to restore>`
+```
+
+## fix/review.json
+
+| Field | Type | Notes |
+|---|---|---|
+| `schema` | string | exactly `reproduce/fix-review@1` |
+| `status` | string | `APPROVED`, `CHANGES_REQUESTED` or `REJECTED` |
+| `independence` | string | `subagent` or `single-context` |
+| `root_cause` | string | the symbol and file the patch changes |
+| `impact` | array | each item has `caller`, `risk` and `test` strings |
+| `tests.red_green` | boolean | true only when the same input failed before and passes after |
+| `tests.suite` | string | `pass`, `fail` or `not-run` |
+| `diff` | string | `fix/diff.patch` |
+| `reasons` | array | non-empty; one line per deciding fact |
+| `risks` | array | what remains untested or uncertain |
+
+A `REJECTED` review may omit `impact` and `tests`; its reasons say why. A `CHANGES_REQUESTED` review
+names the defect and what would make it approvable.
+
+## fix/report.md
+
+```markdown
+# Fix report: <crash>
+
+Run `<run folder>` · Reproduction verdict `REPRODUCED (blame-frame)` · Fix status `FIXED`
+
+## What changed
+
+- `<file>` — <the change>
+- `<test>` — <the regression test>
+
+## Impact
+
+<The callers checked, the contracts unchanged, the untested paths and the residual risk.>
+
+## Verification
+
+- Reproduction test: `<command>` — fail before, pass after
+- Full suite: `<command>` — pass
+- Device: `<build, device, UI sequence, video/log>` or `not applicable`
+
+## Review
+
+`fix/review.json` — `<reviewer status>`, independence `<subagent|single-context>`, `<file>`.
+
+## Rollback
+
+`<the revert command>`
+
+## Limits
+
+- <What was not tested.>
+- <What remains risky.>
+```
+
+## Status
+
+- `FIXED`: reviewer `APPROVED`, red-to-green reproduction test, full suite pass.
+- `FIX_PARTIAL`: the fix was verified, but the impact map, the full suite or an automated regression
+  test is incomplete.
+- `NOT_FIXED`: the suite failed, the reviewer rejected, or the root cause was not reached.
+
+## diff.patch
+
+Write the applied change with `git diff --no-ext-diff > fix/diff.patch`. Do not include unrelated
+working-tree changes; if the app already had changes, say which files are the fix. The patch is the
+rollback record, not a commit.

@@ -15,6 +15,8 @@ current folder):
 | `attempts/NN/manifest.json`, `attempts/NN/observed.json` | the test/device run and its raw evidence |
 | `verdict/NN.json` | the blind referee's status, level, matched type/place and rules |
 | `report.md`, `guide.md` | the report and the tester guide |
+| `fix/plan.md`, `fix/review.json`, `fix/report.md`, `fix/diff.patch` | the opt-in fix record, when the fix runs |
+| `fix/after/` | the fix test output, JUnit or device evidence |
 | `progress.md` | one line per step |
 | `device-env.json` | the device, OS, locale, timezone, build variant and isolation, when the device path ran |
 | `ui-*.xml`, `dump-*.json` | the UI tree the model read, when the device path ran |
@@ -23,13 +25,15 @@ current folder):
 The run folder is local: add `.reproduce/` to the app's `.git/info/exclude` or `.gitignore` so crash data is
 not committed.
 
-The installer also writes the agent's skill copy (outside the app). On iOS the run may write temporary
+The installer also writes both skill copies (outside the app). On iOS the run may write temporary
 XCUITest automation in a scratch project or a temporary test target; UI automation is model-written and
 temporary. A reader may write a temporary local script for a file too large for its file tool; it stays in the
 run folder and is not committed.
 
-It never edits the app's production code, dependencies, build configuration or signing. A reproduction test
-in an existing test target is uncommitted unless you ask.
+Reproduction never edits the app's production code, dependencies, build configuration or signing. A
+reproduction test in an existing test target is uncommitted unless you ask. A fix is the separate
+`fix-crash` skill: it changes production code only after your explicit approval, with a plan, an impact map,
+a fresh reviewer and tests; the diff stays uncommitted unless you ask.
 
 ## Hosts it contacts
 
