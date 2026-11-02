@@ -145,7 +145,7 @@ build, and drives it. See [references/tester.md](skills/reproduce/references/tes
 | `skills/reproduce/` | the product: `SKILL.md` and `references/`; no code asset |
 | `scripts/install-skill.sh` | the binary-free installer |
 | `scripts/e2e-clean.sh` | clean-checkout smoke: installs the skill, checks its frontmatter, sizes and links, and checks it stays Markdown-only |
-| `docs/` | usage, testers, architecture, what it touches |
+| `docs/` | usage, testers, architecture, evaluation, compatibility, what it touches |
 
 ## Develop
 
@@ -164,7 +164,9 @@ The full benchmark, schema checkers and unit tests are maintainer material kept 
 
 The 2.0 evaluation covered 19 real crash scenarios (Kese 4, Kiler 5, Rota 5, Nabız 5): **19 REPRODUCED**,
 each with a device or code run, a video/report and an independent referee verdict. The runs are not part of
-this repository.
+this repository. See [docs/EVALUATION.md](docs/EVALUATION.md) for what the public checks cover, what the
+private benchmark keeps, and which negative cases the rulebook must reject; see
+[docs/COMPATIBILITY.md](docs/COMPATIBILITY.md) for install targets and requirements.
 
 ## More
 
@@ -172,6 +174,8 @@ this repository.
 - [docs/TESTERS.md](docs/TESTERS.md): the tester path
 - [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md): the skill, the device tools, the run folder, why Markdown
 - [docs/WHAT-IT-DOES.md](docs/WHAT-IT-DOES.md): every file, host and program it touches
+- [docs/EVALUATION.md](docs/EVALUATION.md): public checks, real-run evidence, the private benchmark
+- [docs/COMPATIBILITY.md](docs/COMPATIBILITY.md): install targets, requirements, what is verified
 - [AGENTS.md](AGENTS.md): install and operating rules for coding agents
 - [CHANGELOG.md](CHANGELOG.md), [CONTRIBUTING.md](CONTRIBUTING.md), [SECURITY.md](SECURITY.md),
   [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md)

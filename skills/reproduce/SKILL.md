@@ -1,7 +1,7 @@
 ---
 name: reproduce
-description: Reproduces a mobile app crash from a Crashlytics, Sentry or other crash report and proves it with a failing test or a device run. Use when the user asks to reproduce a crash (/reproduce or $reproduce), pastes a crash link or a stack trace, an Apple .ips/.crash report, logcat output, or asks why a crash happens, how to reproduce it, or to turn it into a test. Android and iOS.
-compatibility: The code path requires a shell and the app's own build tools; the device path requires adb/emulator (Android) or Xcode/simctl (iOS). No reproduce binary, no Go, no Python, no MCP. A browser tool is preferred for fetching; an API token or a pasted trace is the fallback. Works with Claude Code, Codex, OpenCode, Gemini CLI, Cursor and GitHub Copilot; subagents are optional.
+description: Reproduces a mobile app crash from a Crashlytics, Sentry or other crash report and proves it with a failing test or a device run. Use when the user asks to reproduce a crash (/reproduce or $reproduce), pastes a crash link or a stack trace, an Apple .ips/.crash report, logcat output, or asks why a crash happens, how to reproduce it, or to turn it into a test. Android, iOS, Flutter and React Native, including ANRs.
+compatibility: The code path requires a shell and the app's own build tools; the device path requires adb/emulator (Android) or Xcode/simctl (iOS). No reproduce binary, no Go or Python runtime, no MCP. A browser tool is preferred for fetching; an API token or a pasted trace is the fallback. Subagents are optional.
 metadata:
   opencode/slash: "true"
 ---
@@ -11,6 +11,8 @@ metadata:
 Turn a crash report into a verified reproduction: read the event, find the trigger, write a test that calls
 the real code, run the app's own test command, and let an independent referee decide. The verdict is an
 evidence-backed judgment, not a proof.
+
+You are the orchestrator: you run steps 0-5, write `analysis.json`, and never judge the evidence yourself.
 
 Read this file before the first command. Read only the reference the current step names; do not load all
 references at once.
@@ -36,6 +38,13 @@ references at once.
   tools directly (adb/emulator, xcrun simctl/xcodebuild); for iOS UI automation, write a temporary XCUITest
   yourself (the skill ships no runner). No example command is a required sequence: read the screen and the
   evidence, then choose the next step. See [device-path.md](references/device-path.md).
+
+## Gotchas
+
+- The reported crash itself is not a reproduction; test code is not app code.
+- A generic wrapper is not evidence without a matching place.
+- The iOS simulator shares the Mac's network; ask before launching an app that reports to production.
+- `uiautomator dump` can return a null root during a splash; wait and retry.
 
 ## The crash report
 
@@ -174,23 +183,8 @@ When a tool is missing, a command is refused, a fetch fails or output is truncat
 
 ## References
 
-Read only what the current step needs:
+Read only what the current step needs; the step that names a file is when to read it.
 
-- [schemas.md](references/schemas.md): the run folder, file names and fields.
-- [code-path.md](references/code-path.md): the project probe, test locations, test commands.
-- [device-path.md](references/device-path.md): the skill-native device path, UI, isolation, replay and report.
-- [android-device.md](references/android-device.md): raw adb setup, UI tree, logcat and video.
-- [ios-device.md](references/ios-device.md): simctl setup, install, crash reports and isolation.
-- [ios-ui-automation.md](references/ios-ui-automation.md): writing temporary iOS UI automation yourself.
-- [browser-fetch.md](references/browser-fetch.md): reading a whole event in the browser.
-- [api-fetch.md](references/api-fetch.md): the headless API and token fallback.
-- Formats: [jvm.md](references/formats/jvm.md), [logcat.md](references/formats/logcat.md),
-  [junit.md](references/formats/junit.md), [apple.md](references/formats/apple.md),
-  [crashlytics.md](references/formats/crashlytics.md), [sentry.md](references/formats/sentry.md),
-  [flutter.md](references/formats/flutter.md), [js.md](references/formats/js.md).
-- [referee.md](references/referee.md): the blind referee protocol and verdict schema.
-- [rules.md](references/rules.md): the verdict rulebook, level definitions and rule IDs.
-- [recovery.md](references/recovery.md): blocked steps, refused commands, truncated output.
-- [report.md](references/report.md): the report and guide layouts.
-- [reader.md](references/reader.md): the fresh reader pass and its fallback.
-- [tester.md](references/tester.md): the tester's device path and the APK/.app handoff.
+- **Run and verdict:** [schemas.md](references/schemas.md), [reader.md](references/reader.md), [referee.md](references/referee.md), [rules.md](references/rules.md), [recovery.md](references/recovery.md), [report.md](references/report.md), [tester.md](references/tester.md).
+- **Project and device:** [code-path.md](references/code-path.md), [device-path.md](references/device-path.md), [android-device.md](references/android-device.md), [ios-device.md](references/ios-device.md), [ios-ui-automation.md](references/ios-ui-automation.md).
+- **Fetch and formats:** [browser-fetch.md](references/browser-fetch.md), [api-fetch.md](references/api-fetch.md), formats: [jvm.md](references/formats/jvm.md), [logcat.md](references/formats/logcat.md), [junit.md](references/formats/junit.md), [apple.md](references/formats/apple.md), [crashlytics.md](references/formats/crashlytics.md), [sentry.md](references/formats/sentry.md), [flutter.md](references/formats/flutter.md), [js.md](references/formats/js.md).

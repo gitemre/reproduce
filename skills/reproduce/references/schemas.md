@@ -1,23 +1,27 @@
 # Evidence schemas
 
-This file names the fields the skill writes; the private maintainer validator checks the same
-names and types.
+The private validator checks these fields.
 
 Run files: `crash.json` and `observed.json` (reader), `manifest.json` (reproducer), `verdict/NN.json`
 (referee; `NO_VERDICT` by the orchestrator), `analysis.json` (orchestrator), `project.yaml` (probe),
 `device-env.json` (device path), `raw/` (fetcher and reproducer), `progress.md` (orchestrator).
 `raw/source.json` is the fetcher's output; see [api-fetch.md](api-fetch.md#sourcejson).
+`<slug>` is the event id when there is one, else `<app>-<type>` in kebab-case; one crash, one slug.
+`NN` is two digits; the first attempt is `01`.
 
-A guide-only run has no app: it writes `crash.json`, `analysis.json`, `guide.md` and a `NO_VERDICT`
-`report.md`, with no `project.yaml` and no attempt files.
+A guide-only run writes `crash.json`, `analysis.json`, `guide.md` and a `NO_VERDICT` `report.md`.
+
+## Contents
+
+Common rules · crash.json · observed.json · manifest.json · verdict.json · analysis.json · project.yaml
 
 ## Common rules
 
 - A file is one UTF-8 JSON object, except `project.yaml` (the minimal subset in
   [code-path.md](code-path.md#the-project-file)). No comments, no trailing commas.
 - A required field is present; an empty value means the input lacked it, unless stated.
-- Extra keys are allowed; never rename or drop a required key.
-- Times are RFC 3339 UTC strings; paths are relative to the run folder.
+- Extra keys are allowed; never drop a required key.
+- Times are RFC 3339 UTC; paths are relative to the run folder.
 - `exceptions` is the exception chain, outermost first. Frames are innermost first.
 - `platform` is `android`, `ios` or `unknown`. `kind` is `fatal`, `non_fatal`, `anr` or `unknown`.
 - `session_data` is `present` (the event has breadcrumbs), `partial` (logs, keys, tags or context
@@ -107,9 +111,8 @@ context, not evidence.
 | `raw` | non-empty array | paths to the captured output, logcat, `.ips` or JUnit XML |
 | `started_at` | non-empty string | when the run started |
 
-`device-env.json` (device path) records `platform`, `os`, `device`, `locale`, `timezone`, `app_id`,
-`artifact`, `variant` and `isolation`; an optional `headless` boolean records a run with no emulator or
-simulator window. [device-path.md](device-path.md#device-envjson) gives the types.
+`device-env.json` (device path) records the device, OS, locale, timezone, app id, artifact, variant, isolation
+and the optional `headless` flag; [device-path.md](device-path.md#device-envjson) gives the types.
 
 ## verdict.json
 
@@ -137,8 +140,8 @@ other statuses and never `NO_VERDICT`.
 A `REPRODUCED` verdict needs a non-empty `level` and `best.matched_type`; `best.location` names the
 place. `none` is allowed for `type-and-message` (also `best.message_match: true`) and a type-only
 `PARTIAL` (`level: ""`, no matched place). `PARTIAL` and `NOT_REPRODUCED` have an empty `level`.
-`NOT_REPRODUCED` may omit `best`; its reasons say why. When evidence is insufficient or rules conflict,
-the lower verdict wins. The report labels `single-context` verdicts as not independently verified.
+`NOT_REPRODUCED` may omit `best`; its reasons say why. The tie-break is in [rules.md](rules.md). The report
+labels `single-context` verdicts as not independently verified.
 
 ## analysis.json
 

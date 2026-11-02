@@ -6,6 +6,10 @@ tie-break decides conflicts. The levels are `blame-frame`, `call-path`, `system-
 frames (`src/test`, `Tests`, `test`, `__tests__`) are not app frames even when marked `in_app` (R1); the
 blame frame is the innermost app frame of the root exception.
 
+## Contents
+
+Rules · Tie-break
+
 ## Rules
 
 ### R1 — Test code is not the app

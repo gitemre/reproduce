@@ -1,21 +1,25 @@
 # Apple crash reports
 
-Apple inputs are an `.ips` report (JSON header and body), a text `.crash`, or
+Apple inputs are an `.ips` (JSON header and body), a text `.crash`, or
 an XCTest backtrace. One report is one crash; never merge two.
+
+## Contents
+
+Signature · Header/fields · Exception types/signals · Threads/frames · Symbolication · in_app · Blame frame · Session data · Examples · Failure modes
 
 ## Signature
 
-An `.ips` begins with a JSON object on its first line, then a JSON body:
+An `.ips` starts with a JSON object, then a JSON body:
 
 ```json
 {"app_name":"MyApp","bundleID":"com.shop.app","bug_type":"309"}
 {"exception":{"type":"EXC_BREAKPOINT","signal":"SIGTRAP"},"threads":[...],"usedImages":[...]}
 ```
 
-`bug_type` is `309` (some exports use `109` with a text body). A `.crash`
+`bug_type` is `309` (some exports use `109`). A `.crash`
 has `Exception Type:`, `Triggered by Thread:` and `Thread 0 Crashed:`. An
 XCTest backtrace has a `Fatal error:` line, `*** Program crashed: System
-trap`, `Thread 0 crashed:` frames, or an `XCTAssert` failure.
+trap`, `Thread 0 crashed:` frames, or an `XCTAssert`.
 
 ## Header and fields
 

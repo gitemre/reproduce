@@ -4,6 +4,10 @@ A Java or Kotlin stack trace copied from a crash console, a test log or a
 bug report. It is the same grammar Android writes in logcat, without the log
 prefixes.
 
+## Contents
+
+Inputs · What to extract · Fields · in_app · Blame frame · Missing fields · Worked example · Failure modes
+
 ## Inputs
 
 - The exception header: `java.lang.NumberFormatException: For input string: "12,5"`.

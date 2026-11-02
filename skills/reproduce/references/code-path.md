@@ -1,5 +1,9 @@
 # Code path
 
+## Contents
+
+When to use · Detect the project · App id · Modules · Test sources · Test command · Toolchain · The project file · Test-only build changes · Running the test · Failure modes
+
 ## When to use
 
 Read this in step 0 (probe the project) and again in step 2 (choose the code and the test location).
@@ -17,9 +21,9 @@ Start at the app repository root and use the first match:
 5. **SwiftPM app**: `Package.swift` with an iOS platform and an app `Info.plist`
    (`CFBundlePackageType` is `APPL`).
 
-No match: stop. There is no app repository here; that is the tester path, not a code-path
-reproduction. If the root has no app but exactly one folder one or two levels down does, that folder
-is the app; run its commands there.
+No match: stop. There is no app repository here; that is the device path, or guide-only when there is no
+artifact, not a code-path reproduction. If the root has no app but exactly one folder one or two levels down
+does, that folder is the app; run its commands there.
 
 ## App id
 
@@ -156,7 +160,7 @@ copy any JUnit XML or `.ips` report under `raw/`. Record the test path, the comm
 
 ## Failure modes
 
-- No app repository: tester path, not a code-path run.
+- No app repository: device path, or guide-only when there is no artifact; not a code-path run.
 - No unit-test sources: `testable: false`; the device path is next, and only with no device/engine does
   step 3 stop with `NO_VERDICT` and a guide.
 - Xcode needs a project membership edit without the user's yes: `NO_VERDICT` and a guide.

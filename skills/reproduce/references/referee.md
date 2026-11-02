@@ -3,6 +3,10 @@
 The referee answers one question for one attempt: did an observation reproduce the target crash? It sees
 evidence, not the attempt's story. [rules.md](rules.md) is the knowledge; this file is the contract.
 
+## Contents
+
+Independence and blindness · What counts as evidence · Procedure · Verdict file · Cite rule · Conservative tie-break · Malformed verdicts · NO_VERDICT · No self-grading
+
 ## Independence and blindness
 
 Use a fresh subagent that has not seen the run's analysis, test or hypothesis, and give it files, not a
@@ -116,12 +120,8 @@ matching place); a `NOT_REPRODUCED` says why no observation placed the crash.
 
 ## Conservative tie-break
 
-`NOT_REPRODUCED` < `PARTIAL` < `REPRODUCED`. A wrong `REPRODUCED` is worse than a miss: when the evidence
-is insufficient or two rules conflict, choose the lower verdict. Type and place both match for
-`REPRODUCED`; exactly one matches for `PARTIAL`; neither for `NOT_REPRODUCED`. The caps in `rules.md`
-apply: a generic build-tool wrapper with no matching place is `NOT_REPRODUCED` (R4); a place that is only
-test code is at most `PARTIAL` (R1); a self-observation is not evidence (R2); the best observation decides
-when several exist.
+The tie-break and caps are in [rules.md](rules.md); a wrong `REPRODUCED` is worse than a miss. When the
+evidence is insufficient or two rules conflict, choose the lower verdict.
 
 ## Malformed verdicts
 

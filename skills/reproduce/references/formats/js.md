@@ -4,6 +4,10 @@ Jest output and React Native reports carry a JavaScript error. The wrapper a
 crash reporter puts around it is not the error: read the JS error and its
 frames.
 
+## Contents
+
+Inputs · Failure shapes · What to extract · Frames, symbols and positions · in_app and JS/native separation · Fields · Blame frame · Worked example · Failure modes
+
 ## Inputs
 
 Jest's failure block names the test after `●`, prints the error, a code

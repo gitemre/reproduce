@@ -81,7 +81,7 @@ Layout:
 | `skills/reproduce/references/` | fetch, readers, code path, device path, referee, report |
 | `scripts/install-skill.sh` | the binary-free installer |
 | `scripts/e2e-clean.sh` | the public install, frontmatter, size, link and Markdown-only smoke check |
-| `docs/` | usage, testers, architecture, what it touches |
+| `docs/` | usage, testers, architecture, evaluation, compatibility, what it touches |
 
 The skill is the product. Keep `SKILL.md` under 12 KB and every reference under 10 KB (the public smoke check
 and the private checker enforce both). Do not add an absolute path, a `TODO`, or an instruction to run a

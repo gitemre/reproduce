@@ -3,6 +3,10 @@
 A Flutter test run, a Flutter framework error and a Dart VM log all print the
 same Dart error chain. The runner's progress lines are not part of it.
 
+## Contents
+
+Inputs · What to extract · Fields · in_app and `package:` frames · Blame frame · FlutterError wrappers · AOT offsets · Worked examples · Failure modes
+
 ## Inputs
 
 `flutter test` / `dart test` output has one block per failed test. The terse

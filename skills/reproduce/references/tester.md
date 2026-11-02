@@ -14,9 +14,9 @@ device; never ask for a password in chat.
 
 ## What to do
 
-1. Make a folder for the run and the artifact: `.reproduce/runs/<slug>/` (the folder is the run root).
+1. Make a folder for the run and the artifact: `.reproduce/runs/<slug>/` (the folder is the run folder).
 2. Read the crash with the skill's readers ([browser-fetch.md](browser-fetch.md),
-   [api-fetch.md](api-fetch.md), [formats/](formats/)). Write `crash.json` and `analysis.json`: exception,
+   [api-fetch.md](api-fetch.md), the matching file in `formats/`). Write `crash.json` and `analysis.json`: exception,
    frame, trigger, screens, platform. With only an artifact, read its package/bundle id and version
    (`aapt`/`plutil`; the platform pages have the command).
 3. Boot a device of the run's own, or use the one the tester prepared and installed. In that case confirm

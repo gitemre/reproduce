@@ -9,12 +9,16 @@ There is no `reproduce` binary, no Python driver and no bundled UI runner. The p
 `emulator`, `avdmanager`, `xcrun simctl` and `xcodebuild`. If iOS needs UI automation, write a temporary
 XCUITest yourself; the skill gives the constraints, not the code.
 
+## Contents
+
+You decide the sequence · 0 Project and build · 1 Crash and analysis · 2 Environment · 3 Reproduce · 4 Evidence and the verdict · 5 Report · When it fails
+
 ## You decide the sequence
 
 - Read the screen and the evidence; choose the next command from what the app actually shows. Do not follow a
   fixed example list when the screen says otherwise.
-- Use raw platform tools or a helper from this skill, whichever gives the better evidence. A helper is not a
-  required step.
+- Use raw platform tools, or a command from the platform page, whichever gives the better evidence. No command
+  is a required step.
 - If a documented command does not fit the device or the app, adapt it and record why in `progress.md`.
 
 Non-negotiables:
@@ -40,7 +44,7 @@ Keep the artifact path. Do not change production code, dependencies, build confi
 ## 1 Crash and analysis
 
 Resolve the crash with the code path's fetch ([browser-fetch.md](browser-fetch.md),
-[api-fetch.md](api-fetch.md), [formats/](formats/)). Write `crash.json` and `analysis.json`: exception chain,
+[api-fetch.md](api-fetch.md), the matching file in `formats/`). Write `crash.json` and `analysis.json`: exception chain,
 blame frame, trigger, screens, platform, OS, locale. The device path adds the UI route that reaches it.
 
 ## 2 Environment

@@ -5,6 +5,23 @@ All notable changes to `reproduce` are listed here. The format follows
 [Semantic Versioning](https://semver.org/spec/v2.0.0.html): a change to a command, a flag or a file
 format that breaks its earlier use comes with a new major version.
 
+## [Unreleased]
+
+### Changed
+
+- **Discovery and portability.** The description covers Flutter, React Native and ANRs; `compatibility` no
+  longer lists specific agents, and "no Python" is now "no Go or Python runtime".
+- **Structure.** The reference index is compressed; every reference over 100 lines has a compact
+  `## Contents`; the referee tie-break points to `rules.md` instead of repeating it.
+- **Terminology.** `NO_VERDICT` is the only status token; "tester path", "run root" and the stale helper
+  reference are gone; `schemas.md` defines the run-folder slug and two-digit attempt numbering.
+- **Gotchas.** `SKILL.md` has a short `## Gotchas` section for the traps the steps otherwise repeat.
+
+### Added
+
+- `docs/EVALUATION.md` (public checks, real-run evidence, private benchmark) and
+  `docs/COMPATIBILITY.md` (install targets, requirements, what is verified).
+
 ## [1.0.1] - 2026-11-01
 
 ### Changed

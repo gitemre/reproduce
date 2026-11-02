@@ -1,5 +1,9 @@
 # API fetch
 
+## Contents
+
+When to use · Crashlytics · Sentry · Tokens · Issue links · Write raw/ · Failure modes
+
 ## When to use
 
 Use the API when there is no browser tool, the run is headless or in CI, the page hides or truncates the

@@ -3,6 +3,10 @@
 A JUnit report written by Gradle, Maven, Bazel or a JUnit runner. It records
 the tests that ran; a failing test is a stack trace, not an app crash.
 
+## Contents
+
+Signature · What to extract · app id and in_app · Session data, threads and keys · Observed evidence · Missing fields · Worked example · Failure modes
+
 ## Signature
 
 The root is `<testsuite>` or `<testsuites>`; each `<testcase>` may hold a

@@ -5,6 +5,10 @@ event (`entries` list, camelCase frame keys) and the raw SDK payload
 (top-level `exception`, `threads`, `breadcrumbs`, snake_case keys). A JSON
 array is a list of events. Read one event as one crash; never merge two.
 
+## Contents
+
+Signature and inputs · Event shape · Exception chain and frames · Threads · Session data · App, device and issue · Installation, device id and privacy · Issue events · Read-only browser checklist · Failure modes
+
 ## Signature and inputs
 
 The REST shape has `id`/`eventID`/`event_id`, `groupID`, `entries`, `contexts`

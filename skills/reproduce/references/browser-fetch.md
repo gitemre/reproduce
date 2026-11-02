@@ -1,5 +1,9 @@
 # Browser fetch
 
+## Contents
+
+When to use · Open the event · Read the whole event · Issue links · Write raw/ · Read-only rules · Login and failure
+
 ## When to use
 
 Use the agent's browser tool when it has one and the user is (or can be) logged in to the console. It is

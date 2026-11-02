@@ -4,6 +4,10 @@ Read what failed before you act. No recovery step changes production code, a dep
 build configuration or signing. When the next step is not possible, record what is missing in
 `progress.md` and report it; a blocked step is a result, not a reason to guess.
 
+## Contents
+
+A tool is missing · A command is refused · A fetch fails · A test cannot run · Output is truncated · A run is interrupted
+
 ## A tool is missing
 
 The build needs `gradlew`, a JDK, `xcodebuild`, `flutter`, `node` or another tool that is not installed. Stop

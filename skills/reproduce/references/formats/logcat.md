@@ -3,6 +3,10 @@
 Android's system log, as captured with threadtime or brief formatting, from
 Android Studio, a bug report or a crash console.
 
+## Contents
+
+Signature · What to extract · Fields · in_app · Blame frame and missing fields · Worked example · Failure modes
+
 ## Signature
 
 A threadtime line looks like:

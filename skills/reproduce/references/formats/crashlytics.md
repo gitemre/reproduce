@@ -5,6 +5,10 @@ JSON array of events, or an **Issue** resource. Events are proto3 JSON: an
 `int64` such as `line` may be a string (`"18"`) or a number (`18`); accept
 both. Read one event as one crash; never merge two events.
 
+## Contents
+
+Signature and inputs · Event shape · Exceptions and threads · in_app and the blame frame · Session data · App, device, issue and variant · Installation and privacy · Issue events · Read-only browser checklist · Failure modes
+
 ## Signature and inputs
 
 An Event has `eventId` and some of `name` (a resource name whose last

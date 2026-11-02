@@ -3,6 +3,10 @@
 The model chooses the commands. This page is the platform vocabulary: emulator, install, isolation, UI tree,
 logs and video. No Python driver is required.
 
+## Contents
+
+Build and boot · Isolate before launch · Read the screen · Evidence · Non-fatals · When done · When it fails
+
 ## Build and boot
 
 The SDK tools are `$ANDROID_HOME`'s `emulator`, `platform-tools/adb` and

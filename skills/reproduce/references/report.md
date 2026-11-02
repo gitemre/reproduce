@@ -15,6 +15,10 @@ reproducer's notes: `verdict/NN.json`, `crash.json`, `analysis.json`, `project.y
 `attempts/NN/manifest.json`, `attempts/NN/observed.json`, `raw/`, and `progress.md`. Every claim names the
 run file it came from; a claim with no file is removed, not softened.
 
+## Contents
+
+Rules · report.md layout · guide.md layout · Before step 5 is done
+
 ## Rules
 
 - **Copy the verdict.** Take the status, level, independence, `best` object, rule IDs and reasons from
@@ -116,7 +120,7 @@ When the referee's `independence` is `single-context`, append ` (single-context)
   `Matched frame` line; it still cites the type.
 - `NOT_REPRODUCED` says why no observation placed the crash. It has no matched labels unless the verdict's
   `best` names the closest non-match.
-- `No verdict` says no test ran and why: no usable test target, a build failure before any test, an
+- `NO_VERDICT` says no test ran and why: no usable test target, a build failure before any test, an
   unreadable observation, or a malformed verdict after one redo. It is not a referee status.
 
 ### The timeline
