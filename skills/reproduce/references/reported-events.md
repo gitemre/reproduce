@@ -21,7 +21,7 @@ The target is a recorded event when:
 
 - the frames look like `Reporter.recordError` → app function → app caller, and the console's blame frame is
   the app function that called the reporter;
-- the message is an app label — a `String` the app passed (`auto_resume_failed`), a constant, or an
+- the message is an app label — a `String` the app passed (`checkout_failed`), a constant, or an
   exception's `toString` — not a framework assertion;
 - the console type is the transport's own naming: `FlutterError` for the Crashlytics Flutter plugin on iOS
   and Android, the recorded class or a bare message for Sentry;
@@ -55,7 +55,7 @@ the native SDK or the network — and leave the app's code and its real stack in
 - Do not call the reporter yourself, do not build the message yourself, and do not throw an exception to
   imitate the report: the payload is then test-supplied (R1 by analogy) and the verdict is at most
   `PARTIAL`.
-- Do not mock the code that decides to record: the retry, validation or resume logic that reaches the
+- Do not mock the code that decides to record: the retry, validation or state logic that reaches the
   reporter must run for real.
 - The captured frames are the evidence of the place; keep the whole stack, not only the top frame.
 - A test that passes is expected: the app does not throw. The run's output must show the captured payload,
@@ -73,7 +73,7 @@ assigns the type.
 A recorded event has no `.ips` and no native crash line to read. On a device the evidence is the payload
 the SDK kept: the log line beside the report, the queue entry, or the console event after an upload. Never
 launch an app that reports to production without the user's yes. When the trigger cannot be staged on a
-device (a dying audio session, a revoked permission), the code path is the only route, and the report says
+device (a transient state, a revoked permission), the code path is the only route, and the report says
 so.
 
 ## What it is not
