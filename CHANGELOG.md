@@ -4,7 +4,7 @@ All notable changes to `reproduce` are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [1.1.0] - 2026-11-02
 
 ### Added
 
@@ -24,6 +24,7 @@ All notable changes to `reproduce` are listed here. The format follows
 
 - `schemas.md` allows `observations[].kind: "recorded"` with its `reporter`; `reader.md`, `referee.md`,
   `report.md`, `formats/crashlytics.md` and `SKILL.md` name the recorded path.
+- R16 uses the message and the reporter's app frame in the tie-break; the recorded-event examples are generic.
 - `scripts/install-skill.sh` installs and removes both skills; `--skills-dir PATH` writes `PATH/reproduce`
   and `PATH/fix-crash`.
 - `scripts/e2e-clean.sh` checks each skill's `SKILL.md`, description, sizes, links and Markdown-only rule.
@@ -56,4 +57,5 @@ The first public release of the Markdown-only, mobile Agent Skill.
   rule.
 - **Docs.** Usage, testers, architecture, compatibility and what-it-does pages.
 
+[1.1.0]: https://github.com/gitemre/reproduce/releases/tag/v1.1.0
 [1.0.0]: https://github.com/gitemre/reproduce/releases/tag/v1.0.0
