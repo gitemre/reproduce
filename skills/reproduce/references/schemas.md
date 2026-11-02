@@ -89,12 +89,15 @@ never edits it.
 | `observations[].source` | non-empty string | the format or raw path the observation came from |
 | `observations[].exceptions` | non-empty array | same shape as `crash.json` |
 | `observations[].session_data` | string | `present`, `partial` or `missing` |
+| `observations[].kind` | string | optional; `recorded` when the app reported the event itself (R16) |
+| `observations[].reporter` | string | required for `recorded`; the called reporter symbol |
 | `observations[].raw` | non-empty string | required for `supplied`; optional for `observed` |
 
-`observed` means the skill ran the command and saw the crash; `supplied` means the crash came from a file
-the skill was given, so anyone could have written it (the report says so). The reported crash itself (same
+`observed` means the skill ran the command and saw the crash; `supplied` means it came from a file
+the skill was given, so anyone could have written it. The reported crash itself (same
 event id or report file) is ignored. An empty `observations` array means a completed run saw no crash:
-`NOT_REPRODUCED`. A missing or unreadable file is `NO_VERDICT`.
+`NOT_REPRODUCED`. A missing or unreadable file is `NO_VERDICT`. A `recorded` observation is captured and
+matched as [reported-events.md](reported-events.md) says.
 
 ## manifest.json
 
@@ -116,9 +119,7 @@ and the optional `headless` flag; [device-path.md](device-path.md#device-envjson
 
 ## verdict.json
 
-Written by the blind referee. The orchestrator writes `NO_VERDICT` when no test ran, the build failed
-before any test, no observation could be read, or the verdict stayed malformed. The referee writes the
-other statuses and never `NO_VERDICT`.
+Written by the blind referee; it never writes `NO_VERDICT`.
 
 | Field | Type | Notes |
 |---|---|---|
@@ -128,7 +129,7 @@ other statuses and never `NO_VERDICT`.
 | `best` | object | required for `REPRODUCED` and `PARTIAL`; omitted when no observation was kept |
 | `best.source` | non-empty string | where the best observation came from, e.g. `attempts/01/observed.json` |
 | `best.matched_type` | string | empty when no type matched |
-| `best.location` | string | `exact`, `function`, `file-line`, `system`, `recursion` or `none` (`none` for `type-and-message` or a type-only `PARTIAL`) |
+| `best.location` | string | `exact`, `function`, `file-line`, `system`, `recursion` or `none` |
 | `best.matched_frames` | integer >= 0 | app frames that match in order |
 | `best.line_delta` | integer | observed line minus target line |
 | `best.message_match` | boolean | the messages match |

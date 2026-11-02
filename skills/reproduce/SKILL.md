@@ -14,8 +14,7 @@ evidence-backed judgment, not a proof.
 
 You are the orchestrator: you run steps 0-5, write `analysis.json`, and never judge the evidence yourself.
 
-Read this file before the first command. Read only the reference the current step names; do not load all
-references at once.
+Read this file before the first command; load only the reference the current step names.
 
 ## Ground rules
 
@@ -36,7 +35,7 @@ references at once.
   emulator/simulator, isolates, installs, drives the UI and records the evidence. It is required for
   UI/device crashes, apps without a usable test target, and testers with an APK/`.app`. Use the platform
   tools directly (adb/emulator, xcrun simctl/xcodebuild); for iOS UI automation, write a temporary XCUITest
-  yourself (automation is model-written and temporary). No example command is a required sequence: read the screen and the
+  yourself (model-written and temporary). No example command is a sequence: read the screen and the
   evidence, then choose the next step. See [device-path.md](references/device-path.md).
 
 ## Gotchas
@@ -65,7 +64,7 @@ records one line per step with `done` and the proving file. Do not start step N+
 
 Probe the app ([code-path.md](references/code-path.md)); for a device run, also read its build files and
 artifact. Write `project.yaml`. If the crash is UI/device, the app has no usable test, or the user wants a device run,
-follow [device-path.md](references/device-path.md); do not stop at `NO_VERDICT`.
+follow [device-path.md](references/device-path.md).
 
 **Done when:** `project.yaml` names the app, modules and, when a test source set exists, the test
 command/source root; `testable: false` is valid and the device path is next.
@@ -89,6 +88,9 @@ For an issue link, prefer the named event, else the latest and record why. Keep 
 transport has it (threads, breadcrumbs, logs, keys, tags, contexts, app, device). When `raw/source.json`
 exists, copy `url`, `event_id`, `issue_id`, `selected`, `reason`, `transport` and `fetched_at` into
 `crash.json.source`; a file input keeps `source.path` and `fetched_at`. Hypothesis: `analysis.json`.
+
+A report whose innermost frame is a reporter call (`recordError`, `captureException`) was recorded by the
+app itself; say so in `analysis.json`.
 
 **Done when:** `crash.json` has a type and at least one frame, or `analysis.json` says why it cannot place
 the crash; `analysis.json` says whether session data was present or missing.
@@ -114,9 +116,10 @@ guess a different crash to reproduce.
 ## 3 Reproduce
 
 Write a test in the app's unit-test sources that calls the real code with the reported input and lets the
-exception escape. Run the app's own test command and capture the raw output and any JUnit XML or `.ips`
-report. Write `attempts/NN/manifest.json`; the reader then writes `attempts/NN/observed.json` from the raw
-output ([reader.md](references/reader.md)). The reproducer never writes or edits the observed evidence. The
+exception escape; a recorded event is captured at the reporter's boundary instead
+([reported-events.md](references/reported-events.md)). Run the app's own test command and capture the raw output and any JUnit XML or `.ips` report. Write
+`attempts/NN/manifest.json`; the reader then writes `attempts/NN/observed.json` from the raw output
+([reader.md](references/reader.md)). The reproducer never writes or edits the observed evidence. The
 test must not catch the exception or mock the crashing function (the exact list is in
 [recovery.md](references/recovery.md)); a test that throws the exception itself is at most `PARTIAL`.
 
@@ -129,7 +132,7 @@ evidence, and the referee judges it. Do not stop at `NO_VERDICT` when the device
 
 **Stop if:** neither a test target nor a device/engine, the user refuses the device run, or the build fails.
 Write `NO_VERDICT` with what is missing and a guide. Adding a test file to an existing target needs the
-user's yes; creating a new target is not part of the code path.
+user's yes.
 
 **Proves:** `attempts/NN/manifest.json` and `attempts/NN/observed.json` (plus the device evidence for a
 device run).
@@ -177,8 +180,7 @@ are not fixable.
 - `NOT_REPRODUCED`: neither matches.
 
 The referee returns `REPRODUCED`, `PARTIAL` or `NOT_REPRODUCED`; the orchestrator records `NO_VERDICT` when no
-run happened, the build failed, no observation was read, or the verdict stayed malformed. The device path uses
-the same referee.
+run happened, the build failed, no observation was read, or the verdict stayed malformed.
 
 ## Recovery
 
@@ -189,6 +191,7 @@ When a tool is missing, a command is refused, a fetch fails or output is truncat
 
 Read only what the current step needs; the step that names a file is when to read it.
 
-- **Run and verdict:** [schemas.md](references/schemas.md), [reader.md](references/reader.md), [referee.md](references/referee.md), [rules.md](references/rules.md), [recovery.md](references/recovery.md), [report.md](references/report.md), [tester.md](references/tester.md).
+- **Run and verdict:** [schemas.md](references/schemas.md), [reader.md](references/reader.md), [referee.md](references/referee.md), [rules.md](references/rules.md), [reported-events.md](references/reported-events.md),
+  [recovery.md](references/recovery.md), [report.md](references/report.md), [tester.md](references/tester.md).
 - **Project and device:** [code-path.md](references/code-path.md), [device-path.md](references/device-path.md), [android-device.md](references/android-device.md), [ios-device.md](references/ios-device.md), [ios-ui-automation.md](references/ios-ui-automation.md).
 - **Fetch and formats:** [browser-fetch.md](references/browser-fetch.md), [api-fetch.md](references/api-fetch.md), formats: [jvm.md](references/formats/jvm.md), [logcat.md](references/formats/logcat.md), [junit.md](references/formats/junit.md), [apple.md](references/formats/apple.md), [crashlytics.md](references/formats/crashlytics.md), [sentry.md](references/formats/sentry.md), [flutter.md](references/formats/flutter.md), [js.md](references/formats/js.md).

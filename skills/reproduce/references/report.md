@@ -121,6 +121,7 @@ When the referee's `independence` is `single-context`, append ` (single-context)
   `best` names the closest non-match.
 - `NO_VERDICT` says no test ran and why: no usable test target, a build failure before any test, an
   unreadable observation, or a malformed verdict after one redo. It is not a referee status.
+- A recorded event (`kind: "recorded"`) also names the reporter and says no user-visible failure is implied.
 
 ### The timeline
 

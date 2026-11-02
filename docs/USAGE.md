@@ -124,6 +124,9 @@ developer asks.
 | `NOT_REPRODUCED` | it ran, and nothing matching crashed |
 | `NO_VERDICT` | nothing could be checked; the reason says why |
 
+An event the app reports itself (`recordError`, `captureException`) matches by message and by the
+reporter's app frame: its type is the transport's, so it decides nothing (`R16`).
+
 A wrong `REPRODUCED` is worse than a miss. When the evidence is insufficient or two rules conflict, the
 lower verdict wins.
 

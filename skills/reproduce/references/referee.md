@@ -53,7 +53,8 @@ contexts and device data never replace a missing type or frame. The one document
 2. Drop the reported crash itself (R2).
 3. For each remaining observation, find the type match (R4, R6–R10) and the place match (R1, R3, R5, R13).
    R7 also requires the same message at the same bundle position, and R11 treats an obfuscated name as
-   build-scoped.
+   build-scoped. A recorded event (R16) matches on its message and the reporter's app frame, not on its
+   transport type.
 4. Choose the best observation: most matching app frames in order, then exact over drifted, then message
    match. One matching observation is enough.
 5. Set the level (R14) and apply the tie-break in `rules.md`. When rules conflict, the lower verdict wins.

@@ -88,7 +88,9 @@ if a frame has the same symbol and line, mark it in-app.
 
 The blame frame is the first `in_app` frame of the last exception (the root
 cause), then an in-app frame of an outer exception, then of the crashed
-thread, then the first frame that exists. Never invent a frame or line.
+thread, then the first frame that exists. Never invent a frame or line. When the innermost frame is a
+reporter call (`recordError`, `recordFlutterError`), the app recorded the event itself: read
+[reported-events.md](../reported-events.md) instead of the throw rules.
 
 ## Session data
 

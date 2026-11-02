@@ -8,6 +8,10 @@ All notable changes to `reproduce` are listed here. The format follows
 
 ### Added
 
+- **Recorded events.** A non-fatal the app reports itself (`recordError`, `captureException`) now has its
+  own page, `references/reported-events.md`: how to recognise it, what the observation is, how to capture
+  it at the transport boundary, and the new rule **R16** — the message and the reporter's app frame decide,
+  because the transport, not the app, assigns the type.
 - **`fix-crash` skill.** A separate opt-in skill for a reproduced crash: `REPRODUCED` gate, minimal fix
   plan and impact map, fresh fix reviewer, explicit user approval, red-to-green reproduction test, full
   suite and device check, `FIXED` / `FIX_PARTIAL` / `NOT_FIXED`, and an uncommitted diff.
@@ -18,6 +22,8 @@ All notable changes to `reproduce` are listed here. The format follows
 
 ### Changed
 
+- `schemas.md` allows `observations[].kind: "recorded"` with its `reporter`; `reader.md`, `referee.md`,
+  `report.md`, `formats/crashlytics.md` and `SKILL.md` name the recorded path.
 - `scripts/install-skill.sh` installs and removes both skills; `--skills-dir PATH` writes `PATH/reproduce`
   and `PATH/fix-crash`.
 - `scripts/e2e-clean.sh` checks each skill's `SKILL.md`, description, sizes, links and Markdown-only rule.

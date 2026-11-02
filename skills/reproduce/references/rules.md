@@ -14,23 +14,23 @@ Rules · Tie-break
 
 ### R1 — Test code is not the app
 
-A test-source frame is not an app frame, even when marked `in_app`. It does not count toward a call path
-and cannot establish the location. If the exception appears only in the test, the test threw it instead of
+A test-source frame is not an app frame, even when marked `in_app`. It cannot count toward a call path or
+establish the location. If the exception appears only in the test, the test threw it instead of
 the app: the place does not match, so the verdict is at most `PARTIAL` (type only). When a real app frame
 matches too, count it and ignore the test frame.
 
-Example: a frame in `PriceParserCrashTest.fakes it` is test code → `PARTIAL`; a stack that also has
-`PriceParser.parse` counts only that frame → `blame-frame`.
+Example: a `PriceParserCrashTest` frame is test code → `PARTIAL`; a stack that also has
+`PriceParser.parse` counts only that one → `blame-frame`.
 
 ### R2 — The reported crash itself is not a reproduction
 
 Ignore an observation that is the target's own crash: same `source.event_id`, `source.path`, or logcat
-entry/time. It proves the report exists, not that the test reproduced it. If only self-observations
+entry/time. It proves the report exists. If only self-observations
 remain, the verdict is `NOT_REPRODUCED` with that reason; if another observation is new, decide on it and
 say the self-observation was ignored.
 
-Example: the target's own logcat entry or `.ips` is the report itself → `NOT_REPRODUCED`; a new crash with
-its own pid adds a new observation.
+Example: the target's own logcat entry or `.ips` → `NOT_REPRODUCED`; a new crash with its own pid adds a
+new observation.
 
 ### R3 — Line drift is not a new place
 
@@ -49,19 +49,18 @@ itself: build tools, test runners and plugins throw it too. A generic type match
 not a reproduction. Build tooling with no app frame → `NOT_REPRODUCED`; the same wrapper in app code
 elsewhere → at most `PARTIAL`. `REPRODUCED` still needs type and place.
 
-Example: a Gradle-wrapper `RuntimeException` with no app frame → `NOT_REPRODUCED`; the same wrapper from
+Example: a Gradle-wrapper `RuntimeException`, no app frame → `NOT_REPRODUCED`; from
 `HomeActivity.onCreate` → `PARTIAL`.
 
 ### R5 — A stack overflow is placed by its repeated cycle
 
 A stack overflow is placed by the frame(s) its recursion repeats, not by depth, entry point, or where it
 struck. Find the shortest repeating cycle on each side; it is the same crash when both repeat the same
-frame at the same place (`level: recursion`). A different repeated frame is a different crash (R13 covers
-its line). Repeated framework frames from a touch dispatch (`ViewGroup.dispatchTouchEvent`) are not a
-recursion.
+frame at the same place (`level: recursion`). A different repeated frame is a different crash (R13). Repeated framework frames from a touch
+dispatch (`ViewGroup.dispatchTouchEvent`) are not a recursion.
 
-Example: both stacks repeat the same cycle → `REPRODUCED`, `recursion`; the cycle moves from line 407 to
-455 → `PARTIAL`; a touch-dispatch repeat is not recursion → `PARTIAL`.
+Example: both stacks repeat the same cycle → `REPRODUCED`, `recursion`; it moves 407 → 455 → `PARTIAL`;
+a touch-dispatch repeat is not recursion → `PARTIAL`.
 
 ### R6 — FlutterError is a Dart wrapper
 
@@ -91,8 +90,7 @@ message → `PARTIAL`.
 `EXC_BAD_ACCESS/SIGSEGV` is a memory fault, not the Swift trap: one against the other is a type mismatch (at
 most `PARTIAL` even at the same frame). Do not compare Mach or signal text as a message (R10).
 
-Example: a matching trap and frame → `REPRODUCED`; a memory fault against the Swift trap at the same frame
-→ `PARTIAL`.
+Example: a matching trap and frame → `REPRODUCED`; a memory fault at the same frame → `PARTIAL`.
 
 ### R9 — A recorded NSError matches by domain and code or by message
 
@@ -108,11 +106,11 @@ Example: the same domain and code (260) → `REPRODUCED`; another code (4) → `
 
 Mach exception text is not a message: `Exception 6, Code 1, Subcode 8`, `EXC_BAD_ACCESS (SIGSEGV)`,
 `KERN_INVALID_ADDRESS`, `ABORT at 0x...`, `SIGABRT` and similar OS text describe the trap, not the app's
-error. Never make a message mismatch or match from it. Compare app messages only when both sides have one;
+error. Never make a match or mismatch from it. Compare app messages only when both sides have one;
 a missing observed message is not a mismatch.
 
-Example: `ABORT at 0x...` against a Swift message: R8 and the frame decide → `REPRODUCED`; an
-`EXC_BAD_ACCESS` type mismatch is R8, and its `KERN_INVALID_ADDRESS` is Mach text.
+Example: `ABORT at 0x...` against a Swift message: R8 and the frame decide → `REPRODUCED`; the
+`KERN_INVALID_ADDRESS` in an `EXC_BAD_ACCESS` is Mach text too.
 
 ### R11 — Obfuscated names are build-scoped
 
@@ -121,8 +119,8 @@ match counts only when the observation is from the target's build (same version 
 build, compare the non-obfuscated frames; a differing obfuscated frame is not by itself a different place,
 and the stable frames decide the level. Never use an obfuscated name to promote a verdict beyond them.
 
-Example: a new-pid crash differs only in the `$r8$lambda$...` name; four stable app frames match →
-`REPRODUCED`, `call-path`; the same-event entry is ignored by R2.
+Example: a new-pid crash differs only in a `$r8$lambda$...` name; four stable app frames match →
+`REPRODUCED`, `call-path`.
 
 ### R12 — With no stack on either side, type and message decide
 
@@ -141,8 +139,8 @@ repeated frame's line differs, it is a different recursion even when symbol and 
 the cycle's symbol, file and line; a differing line is a location mismatch, so the verdict is at most
 `PARTIAL` (type matches, place does not). This outranks R3 and R5.
 
-Example: `Indexer.walk` moves from 407 to 455 → `PARTIAL`; it keeps 407 → `REPRODUCED`, `recursion`; a
-blame frame that drifts by 3 → `REPRODUCED` (R3).
+Example: `Indexer.walk` moves 407 → 455 → `PARTIAL`; it keeps 407 → `REPRODUCED`, `recursion`; a blame
+frame drifting by 3 → `REPRODUCED` (R3).
 
 ### R14 — Level taxonomy
 
@@ -151,8 +149,8 @@ only the blame frame matches. `recursion` when R5 places a stack overflow by its
 when the innermost frame is a framework/system frame that matches and neither side has an app frame.
 `type-and-message` only for R12. `PARTIAL` and `NOT_REPRODUCED` have no level.
 
-Example: two or more app frames in order → `call-path`; only the blame frame after a test frame is ignored
-→ `blame-frame`.
+Example: two or more app frames in order → `call-path`; only the blame frame after a test frame →
+`blame-frame`.
 
 ### R15 — React Native JS carriers and the reporting layer
 
@@ -162,9 +160,15 @@ A carrier target matches an observed JS error when the message and bundle positi
 frame) match; `fatal`/`non_fatal` is the reporting layer. Bundle columns may differ by one (0/1-based):
 normalize one. No JS frame still means no place.
 
+### R16 — Recorded events
+
+An event the app recorded itself (`recordError`, `captureException`) never escaped, so its type is the
+transport's wrapper and decides nothing: match the message and the reporter's app frame (R14). See
+[reported-events.md](reported-events.md).
+
 ## Tie-break
 
-1. Drop the reported crash itself (R2). Match the type (R4, R6–R10, R15) and the place (R1, R3, R5, R13).
+1. Drop the reported crash itself (R2). Match the type (R4, R6–R10, R15, R16) and the place (R1, R3, R5, R13).
 2. Choose the best observation: most matching app frames, then exact over drifted, then message match; one
    match is enough.
 3. Set the level (R14). If rules conflict, the lower verdict wins: `NOT_REPRODUCED` < `PARTIAL` <

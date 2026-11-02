@@ -15,6 +15,7 @@ skills/reproduce/
     browser-fetch.md        reading a whole event in a browser
     api-fetch.md            the headless API and token fallback
     reader.md               the fresh reader pass
+    reported-events.md      events the app reports itself: recordError, captureException
     formats/                jvm, logcat, junit, apple, crashlytics, sentry, flutter, js
     code-path.md            project probe, test locations, test commands
     device-path.md          the model-led device path and its principles

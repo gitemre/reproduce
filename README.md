@@ -202,6 +202,9 @@ outside your app; that project is removed after the run.
 | `NOT_REPRODUCED` | it ran, and nothing matching crashed |
 | `NO_VERDICT` | nothing could be checked; the reason says why |
 
+An event the app reports itself (`recordError`, `captureException`) matches by message and by the
+reporter's app frame: its type is the transport's, so it decides nothing (`R16`).
+
 The referee is conservative: a wrong `REPRODUCED` is worse than a miss.
 
 ### Fix statuses
