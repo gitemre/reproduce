@@ -87,9 +87,12 @@ flowchart LR
 
 - Only after `REPRODUCED`. `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT` are not fixable.
 - The agent asks once, at the end of `/reproduce`; there is no automatic fix.
-- Two approvals: write the plan, then apply the patch.
-- The fresh reviewer sees the applied diff and the test results, not just the plan.
-- `fix/plan.md`, `fix/review.json`, `fix/report.md` and `fix/diff.patch`; the diff stays uncommitted.
+- Two approvals: write the plan, then apply the patch. The exact quotes are in `fix/approved.md`; a missing
+  or ambiguous quote is a rejected fix.
+- The fresh reviewer sees the applied diff, `fix/checks/` (analyzer, red/green, diff, schema) and the test
+  results, not just the plan. It reads the `blind/` copy; no host hook is required.
+- `fix/plan.md`, `fix/approved.md`, `fix/impact.log`, `fix/checks/`, `fix/review.json`, `fix/report.md` and
+  `fix/diff.patch`; the diff stays uncommitted.
 - `FIXED` needs reviewer approval, a red-to-green reproduction test and the full suite. A device-only fix
   without an automated regression test is `FIX_PARTIAL`.
 

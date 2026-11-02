@@ -58,17 +58,21 @@ Firebase project id, not the project number the API uses.
      "$APP/issues/$ISSUE_ID" > raw/issue.json
    ```
 
-5. Read one event by id:
+5. Read one event by full name:
+
+   If the link names only an event id, read the issue's events first (step 6) and take the target's `name`.
+   Set `EVENT_NAME` to that whole `projects/.../events/<sessionKey>_<eventId>` string. `names=` takes the
+   full resource name, not the bare `eventId`; a bare id returns 400.
 
    ```bash
    curl -sS --fail-with-body --get -H "Authorization: Bearer $TOKEN" -H "x-goog-user-project: $PROJECT" \
-     --data-urlencode "names=projects/$PROJECT_NUMBER/apps/$FIREBASE_APP_ID/events/$EVENT_ID" \
+     --data-urlencode "names=$EVENT_NAME" \
      "$APP/events:batchGet" > raw/event.json
    ```
 
-   The body is `{"events":[...]}`; the event is its first element. A console `sessionEventKey` may be
-   `<key>_<suffix>`; if the full key returns no event, try the part before the underscore. Keep the whole
-   event, not only `exceptions`.
+   The body is `{"events":[...]}`; the event is its first element. Keep the whole event, not only
+   `exceptions`. Do not strip a `<sessionKey>_` prefix from `name`: the full resource name is what the
+   endpoint accepts.
 
 6. Read the issue's events:
 
@@ -84,7 +88,7 @@ Firebase project id, not the project number the API uses.
    Use an interval of at most 90 days (89 days back is safe; the default is 7). `page_size` is at most
    100; follow `page_token=<nextPageToken>` only while needed, and stop at 100 (record the truncation).
    The list is normally newest first, but select the maximum `eventTime`. An issue link with no event id
-   needs at least the newest page.
+   needs at least the newest page. Each event's `name` is the full resource name step 5 needs.
 
 ## Sentry
 

@@ -4,6 +4,25 @@ All notable changes to `reproduce` are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [1.1.1] - 2026-11-02
+
+### Fixed
+
+- `api-fetch.md` uses the full event `name` for `events:batchGet`; a bare `eventId` returns 400.
+- `reported-events.md` describes the reporter-absent shape (`recordError(e, stack)`).
+- `code-path.md` names the nearest accessible caller for a private recorder and adds the syntax gate.
+
+### Added
+
+- `fix/approved.md`: exact user quotes for the plan and patch; the reviewer rejects a missing or ambiguous
+  approval.
+- `fix/checks/`: analyzer, red/green, diff and schema output; `fix/impact.log` for the impact pass.
+- `blind/` packs for the referee and the fix reviewer; the check is a file boundary, not a host hook.
+
+### Changed
+
+- Fix verification is portable: commands and files in the Markdown, no Claude Code-specific hooks.
+
 ## [1.1.0] - 2026-11-02
 
 ### Added
@@ -57,5 +76,6 @@ The first public release of the Markdown-only, mobile Agent Skill.
   rule.
 - **Docs.** Usage, testers, architecture, compatibility and what-it-does pages.
 
+[1.1.1]: https://github.com/gitemre/reproduce/releases/tag/v1.1.1
 [1.1.0]: https://github.com/gitemre/reproduce/releases/tag/v1.1.0
 [1.0.0]: https://github.com/gitemre/reproduce/releases/tag/v1.0.0

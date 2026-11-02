@@ -3,7 +3,10 @@
 ## Contents
 
 - Impact map
+- Approval record
 - Patch rules
+- Syntax gate
+- Mechanical checks
 - From reproduction to regression test
 - Device path
 - Dynamic languages
@@ -35,6 +38,31 @@ Cover:
 If a caller is unknown, do not patch; investigate or ask. A fix that only makes the reproduction test
 pass is not a fix.
 
+The map is a claim; back it with commands. Write `fix/impact.log`:
+
+```bash
+git diff --unified=0 > fix/impact.diff
+git grep -n "<changed symbol>" >> fix/impact.log
+```
+
+Run the grep for each changed symbol and name every caller it prints in the plan. A caller in the log
+that the plan omits is a stop; the reviewer makes the same check.
+
+## Approval record
+
+Write `fix/approved.md` after each explicit yes. It is not a summary and not a "probably":
+
+```markdown
+# Fix approval
+
+- Scope: `plan`
+- Approved at: `<RFC 3339 UTC>`
+- Quote: "<the user's exact words>"
+```
+
+Add a second entry with `Scope: patch` before the patch. A missing or ambiguous record is a rejected fix,
+not an approval.
+
 ## Patch rules
 
 - Patch the root cause at the blame frame, not the place where the exception surfaced.
@@ -46,6 +74,33 @@ pass is not a fix.
   skill cannot invent product semantics.
 - If the bug is in a third-party dependency, do not patch the dependency; report the upgrade or
   workaround as a decision.
+
+## Syntax gate
+
+Before the test command, run the app's analyzer or compiler on the touched files and save the output to
+`fix/checks/analyze.log`:
+
+- Dart/Flutter: `dart analyze` or `flutter analyze`.
+- Gradle: the app's compile task for the test source set.
+- Xcode/SwiftPM: `xcodebuild build-for-testing` or `swift build`.
+- TypeScript/React Native: `npx tsc --noEmit` or the app's lint/typecheck script.
+
+A syntax error is not a test failure; fix it and rerun the analyzer. Do not start the test command while
+the analyzer fails.
+
+## Mechanical checks
+
+Write the output to `fix/checks/`. The reviewer rejects a missing or failing check.
+
+- **Red before green.** Keep `fix/checks/red.xml` and `fix/checks/green.xml` (or the runner's logs). The
+  same test name must fail in red and pass in green; a JUnit `<failure>` in red and none in green is the
+  clean form.
+- **Diff equality.** `git diff --no-ext-diff > /tmp/fix.diff` and `cmp -s fix/diff.patch /tmp/fix.diff`;
+  the patch must match the working tree.
+- **Schema.** Check `verdict/NN.json` and `fix/review.json` against `schemas.md` with `jq -e` when it is
+  installed; otherwise record `manual` and the fields checked. A `FIXED` report cannot claim a schema pass
+  it did not run.
+- **Impact.** `fix/impact.log` from the impact pass; every caller it shows is in the plan.
 
 ## From reproduction to regression test
 

@@ -26,7 +26,8 @@ re-fetch or re-analyze the crash; the reproduction already did that.
 Tell the user what you will do: a fix plan and impact map, a fresh reviewer, their approval, the
 minimal patch, the reproduction test from red to green, the app's test suite, and an uncommitted diff.
 Ask for permission to write the plan and, separately, to apply the patch. No production edit before
-the second yes.
+the second yes. Record each yes in `fix/approved.md` with the user's exact words, the time and the scope
+(`plan` or `patch`); if you cannot quote a clear yes, stop.
 
 ## 1 Plan
 
@@ -41,34 +42,39 @@ Write `fix/plan.md` with:
   behavior, not the old crash.
 - **Rollback:** the revert command and the files to restore.
 
-Read [fix.md](references/fix.md) for the impact checklist and the patch rules.
+Read [fix.md](references/fix.md) for the impact checklist and the patch rules. Run the mechanical impact
+pass there and keep `fix/impact.log`; a caller the log shows but the plan omits is a stop.
 
 ## 2 Approve the plan
 
-Present `fix/plan.md` and the impact map. The user approves the plan and, separately, the patch. Do not
-apply anything before the second yes.
+Present `fix/plan.md` and the impact map. The user approves the plan and, separately, the patch. Record
+the plan approval in `fix/approved.md`; do not apply anything before the patch approval.
 
 ## 3 Apply
 
-With the user's explicit yes, apply the minimal patch. Keep the reproduction test; add boundary tests
-for the callers in the impact map. Do not weaken, delete or bypass the test. Do not reformat unrelated
-code; use the app's formatter and linter.
+With the user's explicit yes, record the patch approval in `fix/approved.md`, then apply the minimal
+patch. Keep the reproduction test; add boundary tests for the callers in the impact map. Do not weaken,
+delete or bypass the test. Do not reformat unrelated code; use the app's formatter and linter. Run the
+app's analyzer or compiler on the touched files first and save `fix/checks/analyze.log`; a syntax error is
+a failed fix, not a test failure.
 
 ## 4 Verify
 
 Run the reproduction test: it must fail on the old code and pass on the new code. Run the app's full
 test suite. For a device-path crash, rerun the same UI sequence on the same build and device and record
-the video and log. Put the commands and outputs in `fix/after/`.
+the video and log. Put the commands and outputs in `fix/after/` and `fix/checks/`: the red and green
+output, the diff equality and the schema check ([fix.md](references/fix.md#mechanical-checks)). The
+reviewer rejects a missing or failing check.
 
 If the full suite cannot run, or the crash was device-only with no automated regression test, the
 status is `FIX_PARTIAL`, not `FIXED`.
 
 ## 5 Review the result
 
-Hand the plan, the applied diff (`fix/diff.patch`), `fix/after/` and the original evidence to a fresh
-reviewer ([review.md](references/review.md)); it writes `fix/review.json` after seeing the tests.
-`APPROVED` is required for `FIXED`. `CHANGES_REQUESTED`: revise once and re-run the tests; `REJECTED`:
-revert the patch and report `NOT_FIXED`.
+Hand the plan, approval, the applied diff (`fix/diff.patch`), `fix/checks/`, `fix/after/` and the original
+evidence to a fresh reviewer ([review.md](references/review.md)) via `blind/`; it reads only `blind/` and
+writes `fix/review.json` after seeing the tests. `APPROVED` is required for `FIXED`. `CHANGES_REQUESTED`:
+revise once and re-run the tests; `REJECTED`: revert the patch and report `NOT_FIXED`.
 
 ## 6 Report
 
@@ -91,6 +97,8 @@ Leave the diff uncommitted. Commit or open a pull request only when the user ask
 
 - **No fix without `REPRODUCED`.**
 - **No production edit without the user's explicit yes.**
+- **No approval file, no patch.**
+- **A missing check is a failed check.**
 - **The smallest patch at the blame frame.** A symptom fix is not a fix.
 - **The test is the contract.** Do not catch the exception, loosen the assertion or delete the test.
 - **The reviewer is independent.** The implementer cannot approve its own fix.

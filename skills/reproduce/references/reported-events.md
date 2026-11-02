@@ -21,6 +21,9 @@ The target is a recorded event when:
 
 - the frames look like `Reporter.recordError` → app function → app caller, and the console's blame frame is
   the app function that called the reporter;
+- or the reporter call is absent from the frames: the app passed an existing error or stack to the reporter
+  (`recordError(e, stack)`, `captureException(e)`), so the innermost frame is plugin code. The event is still
+  recorded; match the message and the first app frame below the plugin frame;
 - the message is an app label — a `String` the app passed (`checkout_failed`), a constant, or an
   exception's `toString` — not a framework assertion;
 - the console type is the transport's own naming: `FlutterError` for the Crashlytics Flutter plugin on iOS

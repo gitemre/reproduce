@@ -68,6 +68,10 @@ Otherwise write `testable: false` and leave `test_command` empty: step 0 is done
 next ([device-path.md](device-path.md)); only when no device or engine can run does step 3 end with
 `NO_VERDICT` and a guide. Do not create a test source set or a test target.
 
+When the recorded event's recorder is private (a private class or a part-file boot step), write the test
+from the nearest accessible caller and record that caller in `analysis.json`; do not change visibility or
+call the private symbol directly.
+
 ## Test command
 
 One command, run from the app root. Use the variant the report names: a release report needs the release
@@ -154,9 +158,12 @@ production target, change a dependency block or re-sign the app.
 ## Running the test
 
 Step 3 writes the test in the source set above, calling the real code with the reported input and
-letting the exception escape. Run the command once, capture stdout and stderr to `raw/test.log`, and
-copy any JUnit XML or `.ips` report under `raw/`. Record the test path, the command and `started_at` in
-`attempts/NN/manifest.json`. Do not catch the exception, and do not mock the crashing function.
+letting the exception escape. Before the test command, run the app's analyzer or compiler on the new test
+(Dart `dart analyze` or `flutter analyze`, a Gradle compile, `xcodebuild build-for-testing`, or
+`tsc --noEmit`). A syntax error is a failed attempt, not a crash; fix it and rerun the analyzer. Then run
+the command once, capture stdout and stderr to `raw/test.log`, and copy any JUnit XML or `.ips` report
+under `raw/`. Record the test path, the command and `started_at` in `attempts/NN/manifest.json`. Do not
+catch the exception, and do not mock the crashing function.
 
 ## Failure modes
 

@@ -17,13 +17,21 @@ independently verified.
 
 The referee reads:
 
-- `crash.json`: the target evidence.
-- `attempts/NN/observed.json`: the observations, written by the reader from the test output or the device
+- `blind/crash.json`: the target evidence.
+- `blind/observed.json`: the observations, written by the reader from the test output or the device
   evidence, never by the reproducer.
-- `references/rules.md`: the rulebook, levels and tie-break.
-- `attempts/NN/manifest.json`: context only (test path/command or device artifact and commands, raw paths).
+- `blind/rules.md`: the rulebook, levels and tie-break.
+- `blind/manifest.json`: context only (test path/command or device artifact and commands, raw paths).
   It is not evidence.
-- `raw/`: the raw output or device evidence, only to settle an ambiguous frame.
+- `blind/reported-events.md`: only when the target is a recorded event.
+- `blind/raw/`: the raw output or device evidence, only to settle an ambiguous frame.
+
+## Blind pack
+
+The orchestrator creates `blind/` under the run folder with copies of exactly those files. The referee
+reads only `blind/`; it does not browse the rest of the run folder. This is the portable boundary: no
+host hook is required, and the user can inspect the folder before the referee runs. If a raw file is
+needed for an ambiguous frame, the orchestrator copies that one file into `blind/raw/` first.
 
 It does not read `analysis.json`, the test source, the reproducer's notes, `report.md`, `guide.md` or another
 attempt's verdict. A note that says "this must be it" is not evidence.

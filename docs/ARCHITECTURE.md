@@ -48,13 +48,16 @@ and the observations, not the analysis or the test, and applies
 [rules.md](../skills/reproduce/references/rules.md).
 
 `fix-crash` is a second, opt-in contract. It reads the same run folder, requires a `REPRODUCED` verdict,
-writes a plan and an impact map, gets a fresh reviewer, asks for approval, applies the minimal patch, runs
-the red-to-green test and the full suite, and leaves the diff uncommitted. Reproduction stays read-only.
+writes a plan, an impact map and `fix/approved.md`, runs the syntax gate and `fix/checks/`, asks for
+approval, applies the minimal patch, runs the red-to-green test and the full suite, then gets a fresh
+reviewer from `blind/` and leaves the diff uncommitted. Reproduction stays read-only.
 
 What follows for contributors:
 
 - **Automation is temporary.** When automation is needed, the model writes it for the run — a temporary
   XCUITest or a local reader script — and the run records it.
+- **Portable checks.** Syntax, red/green, diff and schema checks are commands and files in the Markdown;
+  no host hook is required.
 - **Short references.** 12 KB for `SKILL.md` and 10 KB for each reference are attention limits: a long
   document is a document the model skips.
 - **The evidence is the record.** `crash.json`, `observed.json`, `raw/`, `manifest.json` and
