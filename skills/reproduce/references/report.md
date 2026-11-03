@@ -187,6 +187,7 @@ Label each step `observed`, `inferred` or `guess`.
 
 - Screen recording of the whole attempt; screenshots of the crash, build and OS.
 - The crash log, `.ips`, bug report or test-project event; note the start and end time.
+- If the app reports to a test project, note the time; the agent fetches the event.
 
 ## Send back
 

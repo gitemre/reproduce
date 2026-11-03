@@ -104,6 +104,7 @@ fix/checks/
   analyze.log    the analyzer or compiler output
   red.xml        the reproduction test before the patch
   green.xml      the same test after
+  after.log      the same input/device sequence after the patch
   diff.log       the cmp of fix/diff.patch and the working tree
   schema.log     the jq or manual schema check
 ```
@@ -131,6 +132,7 @@ Run `<run folder>` · Reproduction verdict `REPRODUCED (blame-frame)` · Fix sta
 
 - Analyzer: `<command>` — pass
 - Reproduction test: `<command>` — fail before, pass after
+- Target signature: absent in `fix/checks/after.log`
 - Full suite: `<command>` — pass
 - Device: `<build, device, UI sequence, video/log>` or `not applicable`
 
@@ -160,7 +162,7 @@ Run `<run folder>` · Reproduction verdict `REPRODUCED (blame-frame)` · Fix sta
 
 ## Status
 
-- `FIXED`: reviewer `APPROVED`, red-to-green reproduction test, full suite pass.
+- `FIXED`: reviewer `APPROVED`, red-to-green reproduction test, target signature absent, full suite pass.
 - `FIX_PARTIAL`: the fix was verified, but the impact map, the full suite or an automated regression
   test is incomplete.
 - `NOT_FIXED`: the suite failed, the reviewer rejected, or the root cause was not reached.

@@ -44,8 +44,18 @@ The strongest no-tool loop: the app is built with a **test** Crashlytics or Sent
 reproduces, and the agent fetches the new event by time, build and device. The tester only needs the build
 and the steps; no adb, Xcode or API token on the tester's machine.
 
-This requires a test build. A production-reporting build needs the user's explicit yes before the tester
-launches it, and the event may contain real user data; redact it.
+The agent's API access is the environment token, never the tester's. The event is `evidence: supplied` and
+`driver: tester`: the crash is real, but the agent did not drive the device. A production-reporting build
+needs the user's explicit yes before the tester launches it, and the event may contain real user data;
+redact it.
+
+If there is no test project, use the on-device options above.
+
+## Menu names
+
+Menu names vary by OEM and language. Search Settings for "Bug report", "Analytics" or "Screen recorder";
+use the label the tester actually sees. On a phone set to another language, the English path may not exist;
+ask the tester to read the label rather than assume it.
 
 ## What to send
 

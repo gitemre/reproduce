@@ -35,6 +35,9 @@ or `FIX_PARTIAL`; say it was not independently reviewed.
   the intended behavior, not the old crash? Was any assertion weakened, caught broadly or deleted?
 - **Red/green.** Do `blind/checks/red.xml` and `blind/checks/green.xml` name the same test, with a
   failure in red and none in green? Logs are accepted only when the runner cannot emit JUnit.
+- **Target signature.** Does `blind/checks/after.log` show the target exception type and blame frame
+  absent on the same input/device sequence? A passing test that still logs the signature is a change
+  request.
 - **Diff.** Does `blind/checks/diff.log` show `cmp` success between `blind/diff.patch` and the working
   tree?
 - **Schema.** Does `blind/checks/schema.log` show the required fields for `verdict/NN.json` and
@@ -83,9 +86,9 @@ Write `fix/review.json` ([schemas.md](schemas.md#fixreviewjson)):
 
 `APPROVED` requires an exact plan and patch approval, the root cause at the blame frame, a minimal diff,
 a complete impact map, a passing syntax gate, a red-to-green test, a matching diff, a schema check, a
-passing suite and no test weakening. `CHANGES_REQUESTED` names the defect and what would make it
-approvable. `REJECTED` means the wrong root cause, a missing or ambiguous approval, a dependency or
-product decision, or a test that cannot be made honest.
+passing suite, the target signature absent and no test weakening. `CHANGES_REQUESTED` names the defect and
+what would make it approvable. `REJECTED` means the wrong root cause, a missing or ambiguous approval, a
+dependency or product decision, or a test that cannot be made honest.
 
 ## Malformed reviews
 

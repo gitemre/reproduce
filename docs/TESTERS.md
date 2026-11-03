@@ -28,7 +28,9 @@ agent observed the device.
    and end time.
 5. **Capture.** Screen recording, screenshots, and one of: an Android bug report, an iOS `.ips` from
    Analytics Data, a TestFlight feedback, or the test Crashlytics/Sentry event.
-6. **Send back.** One folder or zip with the video, screenshots, log/`.ips`, exact input and time.
+6. **Test project.** If the app reports to a test project, note the time; the agent fetches the event. No
+   token is needed on your machine.
+7. **Send back.** One folder or zip with the video, screenshots, log/`.ips`, exact input and time.
 
 The full menu paths and the no-tool evidence options are in
 [tester-evidence.md](../skills/reproduce/references/tester-evidence.md).

@@ -95,6 +95,9 @@ Write the output to `fix/checks/`. The reviewer rejects a missing or failing che
 - **Red before green.** Keep `fix/checks/red.xml` and `fix/checks/green.xml` (or the runner's logs). The
   same test name must fail in red and pass in green; a JUnit `<failure>` in red and none in green is the
   clean form.
+- **Target signature.** After the patch, run the same input or device sequence and save
+  `fix/checks/after.log`. Grep it for the target exception type and blame frame; they must be absent. A
+  passing test that still logs them is not a fix.
 - **Diff equality.** `git diff --no-ext-diff > /tmp/fix.diff` and `cmp -s fix/diff.patch /tmp/fix.diff`;
   the patch must match the working tree.
 - **Schema.** Check `verdict/NN.json` and `fix/review.json` against `schemas.md` with `jq -e` when it is

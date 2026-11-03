@@ -236,6 +236,9 @@ from a simulator cannot be installed. Android needs an APK.
 
 Never claim a device run, a video or a verdict that did not happen.
 
+If the app reports to a **test** Crashlytics/Sentry project, the tester only reproduces; the agent fetches
+the event by time and build. No token is needed on the tester's machine.
+
 ## Safety
 
 - **Reproduction is read-only.** No production code, dependency, build configuration or signing change

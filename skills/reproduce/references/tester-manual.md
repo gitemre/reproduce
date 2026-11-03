@@ -6,8 +6,8 @@ The run records `driver: tester` and `evidence: supplied`.
 
 ## Contents
 
-Ask first · The brief · Install · Check the build · Set up · Reproduce · Capture · Send back · Stop ·
-Privacy · What this proves
+Ask first · The brief · Install · Check the build · Set up · The test project · Reproduce · Capture ·
+Send back · Stop · Privacy · What this proves
 
 ## Ask first
 
@@ -76,6 +76,16 @@ build may still reproduce, but it is not the reported build.
 - Grant or deny the permissions the crash needs.
 - Decide whether the app needs a fresh install or existing data. Clearing app data can remove the state
   that triggers the crash; record the choice.
+- Menu names vary by OEM and language. Search Settings for "Bug report", "Analytics" or "Screen recorder";
+  use the label the tester actually sees, not a remembered path.
+
+## The test project
+
+Ask the developer for a build that reports to a **test** Crashlytics or Sentry project. The tester
+reproduces; the agent fetches the new event by the start/end time, build and device. No adb/Xcode and no API
+token on the tester's machine. A production-reporting build needs the user's explicit yes; redact user data.
+
+If there is no test project, use the on-device evidence in [tester-evidence.md](tester-evidence.md).
 
 ## Reproduce
 

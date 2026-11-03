@@ -4,6 +4,20 @@ All notable changes to `reproduce` are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.1] - 2026-11-03
+
+### Added
+
+- **Test project standard.** A build with a test Crashlytics/Sentry project lets the tester reproduce and
+  the agent fetch the event by time and build; no adb/Xcode or token on the tester's machine.
+- **Target signature check.** After a fix, the same input/device sequence is written to
+  `fix/checks/after.log`; the target type and blame frame must be absent.
+- **OEM and locale menu notes** for the Android bug report, iOS Analytics Data and screen recording.
+
+### Changed
+
+- `FIXED` requires the target signature absent; a passing test that still logs the signature is not fixed.
+
 ## [1.2.0] - 2026-11-03
 
 ### Added
@@ -94,6 +108,7 @@ The first public release of the Markdown-only, mobile Agent Skill.
   rule.
 - **Docs.** Usage, testers, architecture, compatibility and what-it-does pages.
 
+[1.2.1]: https://github.com/gitemre/reproduce/releases/tag/v1.2.1
 [1.2.0]: https://github.com/gitemre/reproduce/releases/tag/v1.2.0
 [1.1.1]: https://github.com/gitemre/reproduce/releases/tag/v1.1.1
 [1.1.0]: https://github.com/gitemre/reproduce/releases/tag/v1.1.0

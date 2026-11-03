@@ -70,6 +70,9 @@ the video and log. Put the commands and outputs in `fix/after/` and `fix/checks/
 output, the diff equality and the schema check ([fix.md](references/fix.md#mechanical-checks)). The
 reviewer rejects a missing or failing check.
 
+After the patch, run the same input or device sequence and save `fix/checks/after.log`; the target
+exception type and blame frame must not appear. A passing test that still logs them is not a fix.
+
 If the full suite cannot run, or the crash was device-only with no automated regression test, the
 status is `FIX_PARTIAL`, not `FIXED`.
 
@@ -91,7 +94,8 @@ Write `fix/report.md` and `fix/diff.patch` ([schemas.md](references/schemas.md))
 - the rollback;
 - `FIXED`, `FIX_PARTIAL` or `NOT_FIXED`.
 
-`FIXED` needs the reviewer's `APPROVED`, the red-to-green reproduction test and the full suite.
+`FIXED` needs the reviewer's `APPROVED`, the red-to-green reproduction test, the full suite and the target
+signature absent from `fix/checks/after.log`.
 `FIX_PARTIAL` means the fix was verified but the impact or tests are incomplete. `NOT_FIXED` means the
 suite failed, the reviewer rejected or the root cause was not reached.
 
