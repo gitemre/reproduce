@@ -55,8 +55,10 @@ Agents read: Claude Code `~/.claude/skills`; Codex, OpenCode, Gemini CLI, Cursor
   real code and lets the exception escape; run the app's own test command. Do not catch the exception
   (`assertThrows`, `XCTAssertThrows`, `throwsA`, `toThrow`, `assertFailsWith`, `runCatching`, `try?`,
   `@Test(expected = ...)`) and do not mock the crashing function.
-- **Device path:** UI/device crashes, apps without a usable test, a tester with an APK/`.app`. You choose the
-  sequence from the screen and the evidence; no fixed command list. Read
+- **Device path:** UI/device crashes, apps without a usable test, a tester with an APK or a TestFlight/Ad
+  Hoc build. If the device is not attached or the tester has no adb/Xcode, use the tester-driven path
+  (`references/tester-manual.md`, `references/tester-evidence.md`); do not pretend to drive it. You choose
+  the sequence from the screen and the evidence; no fixed command list. Read
   `skills/reproduce/references/device-path.md` first, then the platform page:
   - Android: raw `adb` + `uiautomator` — `references/android-device.md`.
   - iOS: raw `simctl`; if UI automation is needed, write a temporary XCUITest yourself —
@@ -85,7 +87,7 @@ Layout:
 | Path | What |
 |---|---|
 | `skills/reproduce/SKILL.md` | the six steps, the rules and the reference index |
-| `skills/reproduce/references/` | fetch, readers, code path, device path, referee, report |
+| `skills/reproduce/references/` | fetch, readers, code path, device path, tester, referee, report |
 | `skills/fix-crash/SKILL.md` | the fix gate, plan, reviewer, apply, verify, report |
 | `skills/fix-crash/references/` | impact map, fix reviewer, fix schemas |
 | `scripts/install-skill.sh` | installs both skills |

@@ -144,7 +144,8 @@ of a test path and command. A `NO_VERDICT` report says no test ran instead of in
 ## guide.md layout
 
 The guide is for a tester who has the app or a build, not this checkout. It is a manual route, not a
-promise that the skill reproduced the crash.
+promise that the skill reproduced the crash. For a tester with no host tools, read
+[tester-manual.md](tester-manual.md) and [tester-evidence.md](tester-evidence.md); this is the brief layout.
 
 ```markdown
 # Trying <crash> by hand
@@ -153,6 +154,19 @@ promise that the skill reproduced the crash.
 
 - <the app build and version, the platform and device>
 - <console access to the crash report, if the tester has it>
+
+## Install
+
+- Android: <APK link; allow unknown sources; check the build>
+- iPhone: <TestFlight or Ad Hoc; a raw .app is not installable on a physical device>
+
+## Check the build
+
+- App version/build, OS version, device model; screenshot each.
+
+## Set up
+
+- <locale, time zone, network, account, permissions, fresh install or existing data>
 
 ## Where the crash is
 
@@ -166,6 +180,25 @@ promise that the skill reproduced the crash.
 1. <The screen and action from the first breadcrumb.>
 2. <The input or state from the log or key.>
 3. <The action that reaches the blamed function.>
+
+Label each step `observed`, `inferred` or `guess`.
+
+## Capture
+
+- Screen recording of the whole attempt; screenshots of the crash, build and OS.
+- The crash log, `.ips`, bug report or test-project event; note the start and end time.
+
+## Send back
+
+- <the files, the exact input, the time and any variant that changed the result>
+
+## Stop
+
+- <production reporting without consent, wrong build, no build, backend dependency, no evidence>
+
+## Privacy
+
+- <the crash screen only; no passwords, cookies, tokens, personal messages or full backup>
 
 ## What to look for
 

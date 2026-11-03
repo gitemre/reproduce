@@ -4,6 +4,24 @@ All notable changes to `reproduce` are listed here. The format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and versions follow
 [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-11-03
+
+### Added
+
+- **Tester-driven path.** A tester with a physical device and no adb/Xcode gets a one-page brief, installs
+  the APK or TestFlight/Ad Hoc build, reproduces and sends the evidence. The run records `driver: tester`
+  and `evidence: supplied`.
+- **`tester-manual.md` and `tester-evidence.md`.** Install, build check, setup, reproduce, capture,
+  send-back, stop and privacy; Android bug report, iOS Analytics Data/TestFlight feedback, and a test
+  Crashlytics/Sentry project.
+- **Guide v2.** Install, build check, capture, send-back, stop and privacy sections for the tester brief.
+
+### Changed
+
+- `tester.md` branches into agent-driven, tester-driven and guide-only; the physical-device `.app` limit is
+  explicit.
+- `device-path.md` records `driver: agent` or `tester` and sends a no-tool run to the tester-driven path.
+
 ## [1.1.1] - 2026-11-02
 
 ### Fixed
@@ -76,6 +94,7 @@ The first public release of the Markdown-only, mobile Agent Skill.
   rule.
 - **Docs.** Usage, testers, architecture, compatibility and what-it-does pages.
 
+[1.2.0]: https://github.com/gitemre/reproduce/releases/tag/v1.2.0
 [1.1.1]: https://github.com/gitemre/reproduce/releases/tag/v1.1.1
 [1.1.0]: https://github.com/gitemre/reproduce/releases/tag/v1.1.0
 [1.0.0]: https://github.com/gitemre/reproduce/releases/tag/v1.0.0

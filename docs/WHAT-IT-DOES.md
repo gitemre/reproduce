@@ -21,6 +21,7 @@ current folder):
 | `device-env.json` | the device, OS, locale, timezone, build variant and isolation, when the device path ran |
 | `ui-*.xml`, `dump-*.json` | the UI tree the model read, when the device path ran |
 | `logcat.txt`, `crash.ips`, `screenshots/`, `replay.mp4` | the device evidence, when the device path ran |
+| `tester-evidence/` | the tester's video, screenshots and log/bug report, when the tester drives |
 
 The run folder is local: add `.reproduce/` to the app's `.git/info/exclude` or `.gitignore` so crash data is
 not committed.

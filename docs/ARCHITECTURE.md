@@ -27,7 +27,9 @@ skills/reproduce/
     schemas.md              every run file and field
     report.md               report and guide layouts
     recovery.md             blocked steps, refused commands, truncated output
-    tester.md               the tester's path
+    tester.md               the tester path: agent-driven, tester-driven, guide-only
+    tester-manual.md        the tester-driven run without host tools
+    tester-evidence.md      evidence capture on a physical device
 
 skills/fix-crash/
   SKILL.md                  the opt-in fix: gate, plan, reviewer, apply, verify, report
@@ -93,7 +95,7 @@ One crash gets one run: `.reproduce/runs/<slug>/` at the nearest folder up with 
 | File | Writer | Purpose |
 |---|---|---|
 | `project.yaml` | probe | app id, modules, test command/source root, `testable` |
-| `device-env.json` | device path | platform, OS, device, locale, timezone, app id, artifact, variant, isolation |
+| `device-env.json` | device path | platform, OS, device, locale, timezone, app id, artifact, variant, driver, isolation |
 | `crash.json` | reader | the target: exception chain, frames, app, environment |
 | `analysis.json` | orchestrator | trigger, screens, hypothesis, root cause |
 | `raw/source.json`, `raw/` | fetcher | the event(s) as fetched, verbatim |

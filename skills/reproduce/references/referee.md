@@ -43,6 +43,10 @@ A test path in the manifest does not make a test frame an app frame.
 the skill was given: it is evidence of a crash, not of a device run, and the report says so. For a device
 run, the observation is the crash read from `logcat.txt`, the `.ips` or SentryCrash report; a screenshot or
 video corroborates the path but never replaces the exception type and frames.
+
+A tester-driven observation is `supplied`: the tester drove the device and sent the log, `.ips`, bug report
+or test-project event. A crash log can place the type and frame; a video alone may not. The report says
+`driver: tester`; the referee does not upgrade a supplied observation because the tester reproduced it.
 The target's own crash is not an observation: drop an observation with the same event id, source path or logcat entry
 as `crash.json` (R2). If every observation is dropped as the reported crash itself, the verdict is
 `NOT_REPRODUCED`, not `NO_VERDICT`. A readable `observed.json` with an empty `observations` array is a

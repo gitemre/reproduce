@@ -21,6 +21,10 @@ Read the target and the evidence: `crash.json`, `analysis.json`, `attempts/NN/ma
 `attempts/NN/observed.json`, the test path/command or the device evidence, and `report.md`. Do not
 re-fetch or re-analyze the crash; the reproduction already did that.
 
+If the observation is `supplied` by a tester (`driver: tester`), the fix can be planned, but `FIXED`
+requires an agent-run red-to-green test and suite, or a clear tester rerun on the fix build; otherwise
+`FIX_PARTIAL`.
+
 ## 0 Ask before changing code
 
 Tell the user what you will do: a fix plan and impact map, a fresh reviewer, their approval, the

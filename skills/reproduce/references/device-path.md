@@ -9,6 +9,10 @@ The platform tools are `adb`,
 `emulator`, `avdmanager`, `xcrun simctl` and `xcodebuild`. If iOS needs UI automation, write a temporary
 XCUITest yourself; the skill gives the constraints, not the code.
 
+If the device is not attached to this machine, or the tester has no adb/Xcode, do not pretend to drive it:
+use [tester-manual.md](tester-manual.md) and [tester-evidence.md](tester-evidence.md). The run records
+`driver: tester`, `evidence: supplied`, and the tester's files under `tester-evidence/`.
+
 ## Contents
 
 You decide the sequence · 0 Project and build · 1 Crash and analysis · 2 Environment · 3 Reproduce · 4 Evidence and the verdict · 5 Report · When it fails
@@ -60,8 +64,9 @@ Write `device-env.json`:
 | `device` | string | AVD or simulator name and model |
 | `locale`, `timezone` | strings | the language and time zone the run used |
 | `app_id` | string | package name or bundle identifier |
-| `artifact` | string | the installed APK or `.app` path |
+| `artifact` | string | the installed APK or `.app` path, or the TestFlight/Ad Hoc build identifier |
 | `variant` | string | `release` or `debug`; the build the crash came from |
+| `driver` | string | `agent` or `tester` |
 | `isolation` | string | `airplane`, `read-only` or `none` (iOS), and how it was checked |
 | `headless` | boolean | optional; `true` when no emulator or simulator window was opened |
 
@@ -98,11 +103,12 @@ The evidence is what the device wrote, not what the page says:
 
 The reader writes `attempts/NN/observed.json` from these files, as on the code path
 ([reader.md](reader.md)); the referee reads that file, not the page. Keep the raw evidence unedited.
-Record the run in `attempts/NN/manifest.json` with `mode: device`, the artifact, the commands, the start
-time and `raw` ([schemas.md](schemas.md#manifestjson)); it is context, never evidence. A device manifest is:
+Record the run in `attempts/NN/manifest.json` with `mode: device`, `driver: agent` or `tester`, the
+artifact, the commands, the start time and `raw` ([schemas.md](schemas.md#manifestjson)); it is context,
+never evidence. A device manifest is:
 
 ```json
-{"mode":"device","test_path":"","test_command":"","artifact":"app-debug.apk",
+{"mode":"device","driver":"agent","test_path":"","test_command":"","artifact":"app-debug.apk",
  "commands":["adb install -r -t app-debug.apk","adb shell am start -W -n com.shop.app/.MainActivity"],
  "raw":["logcat.txt","replay.mp4"],"started_at":"2026-11-01T10:00:00Z"}
 ```

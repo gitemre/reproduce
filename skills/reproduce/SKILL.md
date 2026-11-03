@@ -40,9 +40,9 @@ Read this file before the first command; load only the reference the current ste
 
 ## Gotchas
 
-- The reported crash itself is not a reproduction; test code is not app code.
+- The reported crash is not a reproduction; test code is not app code.
 - A generic wrapper is not evidence without a matching place.
-- The iOS simulator shares the Mac's network; ask before launching an app that reports to production.
+- The iOS simulator shares the Mac's network; ask before launching a reporting app.
 - `uiautomator dump` can return a null root during a splash; wait and retry.
 
 ## The crash report
@@ -51,7 +51,7 @@ The target is the crash the user gave: a link, a file, or a pasted trace. **If t
 one is the only next step**, even when the user asks for a fix: a fix needs a verified reproduction. Until
 it is there, do not search the code for a likely bug, write a test, or edit anything.
 
-Never substitute a fixture, test data or an old run for the user's crash. If a link fails, say why and ask.
+Never substitute a fixture or an old run for the crash. If a link fails, say why and ask.
 
 ## Run folder and checkpoints
 
@@ -168,9 +168,7 @@ evidence.
 
 **Proves:** the code path's `report.md`/`guide.md`; the device path's `report.md` and `replay.mp4`.
 
-**Next:** when the verdict is `REPRODUCED`, ask once whether to fix. If yes, use the `fix-crash` skill
-with this run folder; do not edit production code here. `PARTIAL`, `NOT_REPRODUCED` and `NO_VERDICT`
-are not fixable.
+**Next:** after `REPRODUCED`, ask once to fix; if yes, use `fix-crash` with this run folder.
 
 ## Verdicts
 
@@ -191,6 +189,6 @@ When a tool is missing, a command is refused, a fetch fails or output is truncat
 Read only what the current step needs; the step that names a file is when to read it.
 
 - **Run and verdict:** [schemas.md](references/schemas.md), [reader.md](references/reader.md), [referee.md](references/referee.md), [rules.md](references/rules.md), [reported-events.md](references/reported-events.md),
-  [recovery.md](references/recovery.md), [report.md](references/report.md), [tester.md](references/tester.md).
+  [recovery.md](references/recovery.md), [report.md](references/report.md), [tester.md](references/tester.md), [tester-manual.md](references/tester-manual.md), [tester-evidence.md](references/tester-evidence.md).
 - **Project and device:** [code-path.md](references/code-path.md), [device-path.md](references/device-path.md), [android-device.md](references/android-device.md), [ios-device.md](references/ios-device.md), [ios-ui-automation.md](references/ios-ui-automation.md).
 - **Fetch and formats:** [browser-fetch.md](references/browser-fetch.md), [api-fetch.md](references/api-fetch.md), formats: [jvm.md](references/formats/jvm.md), [logcat.md](references/formats/logcat.md), [junit.md](references/formats/junit.md), [apple.md](references/formats/apple.md), [crashlytics.md](references/formats/crashlytics.md), [sentry.md](references/formats/sentry.md), [flutter.md](references/formats/flutter.md), [js.md](references/formats/js.md).

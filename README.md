@@ -223,14 +223,18 @@ rollback.
 
 ## For testers without the code
 
-Open the agent in an empty folder and give it the crash. It finds no app, so it writes `guide.md` instead of
-running the crash: the exact build, device, OS, language, time zone and network, numbered steps, variants to
-try, how to recognize the crash, and a ticket to fill in. Each line is labelled observed, inferred or guess.
-A guide-only run also writes `report.md` with `NO_VERDICT`; it is not a reproduction.
+You need the crash link and a build. A physical iPhone needs **TestFlight or an Ad Hoc build**; a raw `.app`
+from a simulator cannot be installed. Android needs an APK.
 
-With the crashing APK or `.app`, the device path can run it without the code. You can boot the emulator or
-simulator and install the build yourself; the agent isolates Android before launch, confirms the device and
-build, and drives it. See [references/tester.md](skills/reproduce/references/tester.md).
+- **The device is attached and adb/Xcode is available, or you have an emulator/simulator:** the agent
+  drives the device and records the evidence; see [device-path.md](skills/reproduce/references/device-path.md).
+- **Only a physical device, no tools:** the run is **tester-driven**. The agent writes a brief; you install,
+  reproduce and send the evidence. See [tester-manual.md](skills/reproduce/references/tester-manual.md) and
+  [tester-evidence.md](skills/reproduce/references/tester-evidence.md). The report says `driver: tester`
+  and `evidence: supplied`; a crash log or test-project event is stronger than a video.
+- **No app and no build:** guide-only. `guide.md` and a `NO_VERDICT` report; it is not a reproduction.
+
+Never claim a device run, a video or a verdict that did not happen.
 
 ## Safety
 

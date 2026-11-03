@@ -40,6 +40,9 @@ or `FIX_PARTIAL`; say it was not independently reviewed.
 - **Schema.** Does `blind/checks/schema.log` show the required fields for `verdict/NN.json` and
   `fix/review.json`, with `jq` or a recorded manual check?
 - **Suite.** Does the app's full test suite pass? If it could not run, the status cannot be `FIXED`.
+- **Provenance.** Was the reproduction `supplied` by a tester (`driver: tester`)? Then the fix verification
+  must be agent-run, or a clear tester rerun on the fix build; a tester-only verification cannot be
+  `FIXED`.
 - **Future.** If the fix introduces an invariant, is it protected by a test, a type or a comment? Does
   it change a public contract without a decision?
 - **Rollback.** Is the revert path recorded and does it restore the touched files?

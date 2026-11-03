@@ -1,49 +1,52 @@
 # For testers without the code
 
-You can make a crash happen again without the app's repository. You need the crash link and, for a device
-run, the crashing APK or simulator `.app`.
+You can make a crash happen again without the app's repository. You need the crash link and a build:
+an Android APK, or an iPhone TestFlight/Ad Hoc build. A raw `.app` from a simulator is not installable on
+a physical iPhone.
 
-## What you get
+## Two ways
 
-Open a coding agent in an empty folder and give it the crash. The skill finds no app, so it takes the tester
-path and writes:
+- **Agent-driven:** the device is attached to the agent's machine, or an emulator/simulator is available,
+  and `adb`/`Xcode` is installed. The agent installs, drives and records the evidence. See
+  [device-path.md](../skills/reproduce/references/device-path.md).
+- **Tester-driven:** you have a physical device and no tools, or the device is not attached to the agent's
+  machine. The agent writes a one-page brief; you install, reproduce and send the evidence. See
+  [tester-manual.md](../skills/reproduce/references/tester-manual.md) and
+  [tester-evidence.md](../skills/reproduce/references/tester-evidence.md).
 
-- `guide.md` — the exact build, device, OS, language, time zone and network; numbered steps to the crash;
-  variants to try; how to recognize the crash; a ticket to fill in. Each line is labelled **observed**,
-  **inferred** or **guess**.
-- `report.md` — the engineering record once a run has happened.
-- A run folder under `.reproduce/runs/<slug>/` with the fetch output and, for a device run, the UI dumps,
-  screenshots and `replay.mp4`.
+The report records `driver: tester` and `evidence: supplied` for a tester-driven run. It never claims the
+agent observed the device.
 
-A guide alone is not a reproduction. Never claim a device run, a video or a verdict that did not happen.
+## Tester-driven, step by step
 
-## With the APK or `.app`
+1. **Install.** Android: download the APK and allow the browser to install unknown apps. iPhone: install
+   TestFlight, accept the invite and install the build; an Ad Hoc build needs your UDID registered.
+2. **Check the build.** App version/build, OS version and model; screenshot each.
+3. **Set up.** Locale, time zone, network, account and permissions. Decide whether a fresh install is
+   needed; clearing data can remove the crash state.
+4. **Reproduce.** Follow the brief's numbered steps; read the screen before each tap. Note the exact start
+   and end time.
+5. **Capture.** Screen recording, screenshots, and one of: an Android bug report, an iOS `.ips` from
+   Analytics Data, a TestFlight feedback, or the test Crashlytics/Sentry event.
+6. **Send back.** One folder or zip with the video, screenshots, log/`.ips`, exact input and time.
 
-The device path needs no code and no test target. You can prepare the device yourself: boot the emulator
-or simulator and install the build (on Android, do not launch it before the agent isolates the device). Tell
-the agent the device, OS and exact build; it confirms them, isolates Android before launch and drives the UI.
-If the crash needs a signed-in session, sign in on the device; never send your password to the agent.
-
-1. Put the artifact and the run folder in the same place (`.reproduce/runs/<slug>/`).
-2. The agent reads the crash with the skill's readers and writes `crash.json`/`analysis.json`.
-3. It boots its own emulator or simulator (or uses yours), installs the artifact and isolates Android
-   before launch. The iOS simulator shares the Mac's network; an app that reports to production needs your
-   explicit yes.
-4. It drives the UI with raw `adb`/`simctl` and, on iOS, temporary XCUITest automation; records `replay.mp4` and
-   collects the app's logs, `.ips`/SentryCrash report or queued Sentry events.
-5. A fresh blind referee writes `verdict/NN.json`; the report cites the exact evidence.
-
-The platform vocabulary is in [device-path.md](../skills/reproduce/references/device-path.md) and the
-walkthrough in [USAGE.md](USAGE.md#device-path).
+The full menu paths and the no-tool evidence options are in
+[tester-evidence.md](../skills/reproduce/references/tester-evidence.md).
 
 ## What to send the developer
 
-- The issue link and the exact build tested (version and build number).
-- The device, OS, language and time zone.
-- The steps, what you expected and what happened.
-- The time of the crash, and the new event link if the app reports to a test project.
-- `report.md`, `replay.mp4` and the run folder.
+- The issue link, the exact build (version and build number), device, OS, language and time zone.
+- The steps, what you expected and what happened; the start/end time.
+- The video, screenshots, crash log/bug report/`.ips`, and the test-project event if the app reports to one.
+- `guide.md`, `report.md` and the run folder.
 
 If the crash does not happen, send the referee's `NOT_REPRODUCED` and the variants you tried; that is a
-useful result, not a failure. If no device or artifact is available, the run is guide-only: `guide.md` and a
-`NO_VERDICT` report, with the missing piece named.
+useful result, not a failure. If no build is available, the run is guide-only: `guide.md` and a `NO_VERDICT`
+report, with the missing piece named.
+
+## Limits
+
+A video can show the app failed, but it may not carry an exception type or frame. A crash log, `.ips` or
+test-project event can. The referee decides; a video alone may be `PARTIAL` or `NO_VERDICT`. Do not send a
+full device backup, passwords, cookies or personal data; redact names and ids that are not needed to place
+the crash.
